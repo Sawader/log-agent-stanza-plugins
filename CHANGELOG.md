@@ -84,4 +84,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated ubiquiti plugin ([337](https://github.com/observIQ/stanza-plugins/pull/337))
   - Updated `ac_lite_ap_parser` expression check to be more inline with expected format.
   - Moved catchall from default to a route with pattern matching and set default to output in router.
-  - Added if checks to determine if fields exist before doing operation `promo
+  - Added if checks to determine if fields exist before doing operation `promote_name`, `promote_device`, and `severity_parser`. This will stop errors in log file if fields do not exist.
+
+## [0.0.79] - 2021-09-22
+
+### Added
+
+- Added haproxy plugin ([PR 335](https://github.com/observIQ/stanza-plugins/pull/335))
+
+### Fixed
+
+- Oracle Database: ([PR 334](https://github.com/observIQ/stanza-plugins/pull/334))
+  - Resolved issue where ipv6 values caused a parse failure
+  - Resolved issue where default listener path is not correct
+- Oracle Database: ([PR 331](https://github.com/observIQ/stanza-plugins/pull/331))
+  - Resolves issue where regex fails to parse audit file dbid
+
+## [0.0.78] - 2021-09-15
+
+### Changed
+
+- W3C: Added max_concurrent_files parameter ([PR332](https://github.com/observIQ/stanza-plugins/pull/332))
+
+### Fixed
+
+- Ubiquiti: Fixed time parsing issue when timezones are mismatched ([PR333](https://github.com/observIQ/stanza-plugins/pull/333))
+
+## [0.0.77] - 2021-09-14
+
+### Changed
+
+- Cloudwatch Logs: Added log_groups and log_group_prefix parameters ([PR330](https://github.com/observIQ/stanza-plugins/pull/330))
+
+## [0.0.76] - 2021-09-13
+
+### Changed
+
+- W3C: Added optional delete_at_end parameter ([PR327](https://github.com/observIQ/stanza-plugins/pull/327))
+
+## [0.0.75] - 2021-09-10
+
+### Changed
+
+- Asterisk: Don
