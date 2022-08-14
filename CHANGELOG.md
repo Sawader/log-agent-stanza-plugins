@@ -54,4 +54,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - cisco_meraki: Remove custom regex parsers and use key_value_parser instead. ([PR349](https://github.com/observIQ/stanza-plugins/pull/349))
 - Update `codeigniter`, `common_event_format`, and `uwsgi`
   - Remove Log Parser from title.
-  - Update uwsgi field `headers` to `h
+  - Update uwsgi field `headers` to `headers_count`
+
+## [0.0.83] 2021-09-29
+
+### Added
+
+- Added `tcp` and `udp` plugin ([PR341](https://github.com/observIQ/stanza-plugins/pull/341))
+- Added `common_event_format` plugin ([328](https://github.com/observIQ/stanza-plugins/pull/328))
+
+### Fixed
+
+- HAProxy: Handle issue where http logs might fail if extra field is present [PR346](https://github.com/observIQ/stanza-plugins/pull/346)
+
+## [0.0.82] 2021-09-28
+
+### Fixed
+
+- OracleDB: Resolved parsing issue related to multiple audit log formats [PR341](https://github.com/observIQ/stanza-plugins/pull/343)
+
+## [0.0.81] 2021-09-28
+
+- HAProxy: Resolved an issue where http logs using default format can fail to parse ([PR342](https://github.com/observIQ/stanza-plugins/pull/342))
+
+## [0.0.80] 2021-09-23
+
+### Fixed
+- HAProxy: Promote frontend_port as a resources ([PR338](https://github.com/observIQ/stanza-plugins/pull/338))
+- Updated ubiquiti plugin ([337](https://github.com/observIQ/stanza-plugins/pull/337))
+  - Updated `ac_lite_ap_parser` expression check to be more inline with expected format.
+  - Moved catchall from default to a route with pattern matching and set default to output in router.
+  - Added if checks to determine if fields exist before doing operation `promo
