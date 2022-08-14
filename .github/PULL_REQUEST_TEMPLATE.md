@@ -9,4 +9,5 @@ In order for changes to be captured in changelog correctly please add one of the
 
 ## **Please check that the PR fulfills these requirements**
 - [ ] Tests for the changes have been added (for bug fixes / features)
-- [ ] Docs have been added 
+- [ ] Docs have been added / updated (for bug fixes / features)
+- [ ] CI passes
