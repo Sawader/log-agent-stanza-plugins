@@ -126,4 +126,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Asterisk: Don
+- Asterisk: Dont trim call_id ([PR325](https://github.com/observIQ/stanza-plugins/pull/325))
+
+### Fixed
+
+- Fixed an issue where mongodb plugin id is wrong when running on kubernetes and using 4.4+ log format ([PR326](https://github.com/observIQ/stanza-plugins/pull/326))
+
+### Fixed
+
+## [0.0.74] - 2021-09-10
+
+### Added
+
+- Added Asterisk plugin ([322](https://github.com/observIQ/stanza-plugins/pull/322))
+
+### Changed
+
+- Updated `w3c` plugin ([PR318](https://github.com/observIQ/stanza-plugins/pull/318))
+  - Add quote parsing from iis to handle when a pair of single quotes are in the log entry.
+- Added net.transport, net.peer.ip, net.peer.port, net.host.ip and net.host.port labels to all tcp / udp plugins ([PR320](https://github.com/observIQ/stanza-plugins/pull/320))
+  - cisco_asa, cisco_meraki, rsyslog, syslog, syslogng, ubiquiti, vmware_esxi, vmware_vcenter
+- Updated `microsoft_iis` and `w3c` plugin ([PR316](https://github.com/observIQ/stanza-plugins/pull/316))
+  - Update plugin to use new w3c plugin.
+- Update `netflow`, `sflow`, `vmware_esxi`, `ubiquiti`, `cisco_meraki`, `syslog`, `rsyslog`, `syslogng`, and `vmware_vcenter` plugin ([PR316](https://github.com/observIQ/stanza-plugins/pull/316))
+  - Added `listen_ip` as parameter
+  - Added `listen_port` as parameter
+  
