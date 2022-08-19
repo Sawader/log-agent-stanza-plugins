@@ -179,4 +179,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.71] - 2021-08-23
 
 ### Fixed
-- Fixed an issue with label.plugin_id was not set correctly for nodejs plugin on K8s ([PR309](https://github.c
+- Fixed an issue with label.plugin_id was not set correctly for nodejs plugin on K8s ([PR309](https://github.com/observIQ/stanza-plugins/pull/309))
+- OpenShift test case ([PR310](https://github.com/observIQ/stanza-plugins/pull/310))
+
+## [0.0.70] - 2021-08-23
+
+### Added
+
+- Added Nodejs plugin ([305](https://github.com/observIQ/stanza-plugins/pull/305))
+
+### Changed
+- Journald: Added optional poll interval parameter ([PR304](https://github.com/observIQ/stanza-plugins/pull/304))
+- OpenShift: Added optional poll interval parameter ([PR304](https://github.com/observIQ/stanza-plugins/pull/304))
+
+## [0.0.69] - 2021-08-11
+
+### Changed
+- MongoDB:
+  - Promote WiredTiger message to $record.message ([PR300](https://github.com/observIQ/stanza-plugins/pull/300))
+  - Set log type when running on Kubernetes ([PR302](https://github.com/observIQ/stanza-plugins/pull/302))
+- JSON: Set log type when running on kubernetes ([PR303](https://github.com/observIQ/stanza-plugins/pull/303))
+
+## [0.0.68] - 2021-08-09
+
+### Changed
+- MongoDB: Default pod name, removed wildcard ([PR298](https://github.com/observIQ/stanza-plugins/pull/298))
+
+### Fixed
+- Changed: Removed file_log_path required and added pod name required param ([PR297](https://github.com/observIQ/stanza-plugins/pull/297))
+
+## [0.0.67] - 2021-08-06
+
+### Ad
