@@ -210,4 +210,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.0.67] - 2021-08-06
 
-### Ad
+### Added
+- MongoDB: Added support for kubernetes ([PR294](https://github.com/observIQ/stanza-plugins/pull/294))
+- JSON: Added support for kubernetes ([PR296](https://github.com/observIQ/stanza-plugins/pull/296))
+  - The kubernetes_container plugin can still be used to gather all pod logs, while the json plugin can be used
+    to target a single deployment / daemonset / statefulset.
+
+### Changed
+- Nginx: Added optional encoding option ([PR292](https://github.com/observIQ/stanza-plugins/pull/292))
+
+## [0.0.66] - 2021-06-30
+
+### Changed
+- Openshift: Added observiq-agent and bindplane-agent filters to avoid potential circular parsing ([PR289](https://github.com/observIQ/stanza-plugins/pull/289))
+- Reduced sqlserver max_reads from 1000 to 100, to combat too many open files error ([PR288](https://github.com/observIQ/stanza-plugins/pull/288))
+- Netflow / Sflow plugins: Added sampling options, for reducing log volume ([PR290](https://github.com/observIQ/stanza-plugins/pull/290))
+
+## [0.0.65] - 2021-06-23
+
+### Added
+- Added Goflow plugins ([PR280](https://github.com/observIQ/stanza-plugins/pull/280))
+  - Sflow Plugin
+  - Netflow v5 / v9 / ipfix
+
+## [0.0.64] - 2021-06-21
+
+### Fixed
+- Retain sc-status field `microsoft_iis` ([PR287](https://github.com/observIQ/stanza-plug
