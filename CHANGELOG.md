@@ -236,4 +236,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.64] - 2021-06-21
 
 ### Fixed
-- Retain sc-status field `microsoft_iis` ([PR287](https://github.com/observIQ/stanza-plug
+- Retain sc-status field `microsoft_iis` ([PR287](https://github.com/observIQ/stanza-plugins/pull/287)
+
+## [0.0.63] - 2021-06-17
+### Added
+- Add `apache_combined` plugin ([PR284](https://github.com/observIQ/stanza-plugins/pull/284))
+- Add `apache_common` plugin ([PR281](https://github.com/observIQ/stanza-plugins/pull/281))
+### Changed
+- Update `microsoft_iis` plugin ([PR285](https://github.com/observIQ/stanza-plugins/pull/285))
+  - Add location as parameter and to `time_parser`
+- Update `codeigniter` plugin ([PR282](https://github.com/observIQ/stanza-plugins/pull/282))
+  - Add multiline message support
+  - Parse nested json in message if detected
+- Update `openshift` plugin ([PR283](https://github.com/observIQ/stanza-plugins/pull/283))
+  - Make metadata optional
+## [0.0.62] - 2021-06-16
+### Added
+- Add `codeigniter` plugin ([PR276](https://github.com/observIQ/stanza-plugins/pull/276))
+### Changed
+- Update `uwsgi` plugin ([PR278](https://github.com/observIQ/stanza-plugins/pull/278))
+  - Remove empty `message` fields
+- Update `cisco_meraki` plugin ([PR275](https://github.com/observIQ/stanza-plugins/pull/275))
+  - Parse known message field formats
+- Update `microsoft_iis` plugin ([PR274](https://github.com/observIQ/stanza-plugins/pull/274))
+  - This changes plugin to use
