@@ -259,4 +259,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update `cisco_meraki` plugin ([PR275](https://github.com/observIQ/stanza-plugins/pull/275))
   - Parse known message field formats
 - Update `microsoft_iis` plugin ([PR274](https://github.com/observIQ/stanza-plugins/pull/274))
-  - This changes plugin to use
+  - This changes plugin to use `csv_parser`
+- Update `kubernetes_events` plugin ([277](https://github.com/observIQ/stanza-plugins/pull/277))
+  - Added missing severity mappings
+
+## [0.0.61] - 2021-06-10
+### Changed
+- Update `cisco_meraki` plugin ([PR272](https://github.com/observIQ/stanza-plugins/pull/272))
+  - Fix parsing errors
+- Update `ubiquiti` plugin, added severity parsing ([267](https://github.com/observIQ/stanza-plugins/pull/267))
+- Update `syslog`, removed special handling ([PR286](https://github.com/observIQ/stanza-plugins/pull/268))
+- Renamed `journald` field `$record.MESSAGE` to `$record.message` ([PR268](https://github.com/observIQ/stanza-plugins/pull/266))
+
+## [0.0.60] - 2021-06-09
+### Added
+- Added Ubiquiti plugin ([264](https://github.com/observIQ/stanza-plugins/pull/264))
+
+### Changed
+- Fixed an issue where journald does not always include the severity parse from field ([PR263](https://github.com/observIQ/stanza-plugins/pull/263))
+
+## [0.0.59] - 2021-06-08
+### Added
+- Add `uwsgi` plugin ([PR261](https://github.com/observIQ/stanza-plugins/pull/261))
+
+### Changed
+- Update `macos` plugin 
+  - Add `supported_platforms` macos ([PR258](https://github.com/observIQ/stanza-plugins/pull/258))
+  - Update system regex to handle space padded dates ([PR259](https://github.co
