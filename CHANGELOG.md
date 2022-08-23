@@ -285,4 +285,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Update `macos` plugin 
   - Add `supported_platforms` macos ([PR258](https://github.com/observIQ/stanza-plugins/pull/258))
-  - Update system regex to handle space padded dates ([PR259](https://github.co
+  - Update system regex to handle space padded dates ([PR259](https://github.com/observIQ/stanza-plugins/pull/259))
+  - Add `relevant_if` to `install_log_path` and `system_log_path` parameters ([PR260](https://github.com/observIQ/stanza-plugins/pull/260))
+ 
+## [0.0.58] - 2021-05-26
+### Added
+- Add `macos` plugin ([PR256](https://github.com/observIQ/stanza-plugins/pull/256))
+
+## [0.0.57] - 2021-05-20
+### Added
+- Add `aws_cloudwatch` plugin ([PR251](https://github.com/observIQ/stanza-plugins/pull/251))
+### Changed
+- Update `pgbouncer` plugin ([PR254](https://github.com/observIQ/stanza-plugins/pull/254))
+  - Parse stats from logs.
+  - Parse requests from logs.
+  - Handle timestamps with timezone
+  - Handle brackets around pid
+
+## [0.0.55] - 2021-05-17
+### Changed
+- Update `netmotion` plugin ([PR250](https://github.com/observIQ/stanza-plugins/pull/250))
+  - Add handle bracket in fwver field for structured data.
+
+## [0.0.54] - 2021-05-06
+### Changed
+- Fixed nested json parsing for Azure Container Logs using Azure Log Analytics ([PR249](https://github.com/observIQ/stanza-plugins/pull/249) 
+- Renamed plugin parameter `name` to `event_hub_name` for Azure plugins Event Hub and Log Analytics ([PR249](https://github.com/observIQ/stanza-plugins/pull/249))
+
+## [0.0.53] - 2021-05-06
+### Added
+- Add Azure Event Hub Plugin ([PR245](h
