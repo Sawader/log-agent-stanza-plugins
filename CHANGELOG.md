@@ -314,4 +314,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.0.53] - 2021-05-06
 ### Added
-- Add Azure Event Hub Plugin ([PR245](h
+- Add Azure Event Hub Plugin ([PR245](https://github.com/observIQ/stanza-plugins/pull/245))
+- Add MariaDB plugin ([PR246](https://github.com/observIQ/stanza-plugins/pull/246))
+- Add Rsyslog Plugin ([PR247](https://github.com/observIQ/stanza-plugins/pull/247))
+- Add Syslog-ng Plugin ([PR247](https://github.com/observIQ/stanza-plugins/pull/247))
+## [0.0.52] - 2021-04-16
+### Added
+- Add Netmotion plugin ([Pr244](https://github.com/observIQ/stanza-plugins/pull/244))
+### Changed
+## [0.0.51] - 2021-03-29
+### Added
+- Add plugins ([PR236](https://github.com/observIQ/stanza-plugins/pull/236))
+  - `file`
+  - `json`
+  - `csv`
+### Changed
+- Update VMware vCenter to make use of TCP input's adjustable buffer ([PR238](https://github.com/observIQ/stanza-plugins/pull/238))
+- Update plugins ([PR237](https://github.com/observIQ/stanza-plugins/pull/237))
+  - Bumped versions of `zookeeper` and `kafka` plugins so they can be registered with platform information.
+## [0.0.50] - 2021-03-18
+### Changed
+- Update `mysql` plugin ([PR234](https://github.com/observIQ/stanza-plugins/pull/234))
+  - Update `label` and `description` of `enable_mariadb_audit_log` parameter.
+## [0.0.49] - 2021-03-18
+- Update `mysql` plugin ([PR232](https://github.com/observIQ/stanza-plugins/pull/232))
+  - Add MariaDB audit plugin log parser using
