@@ -338,4 +338,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Update `label` and `description` of `enable_mariadb_audit_log` parameter.
 ## [0.0.49] - 2021-03-18
 - Update `mysql` plugin ([PR232](https://github.com/observIQ/stanza-plugins/pull/232))
-  - Add MariaDB audit plugin log parser using
+  - Add MariaDB audit plugin log parser using new `csv_parser`
+  - Add `min_stanza_version` and set to v0.13.17
+## [0.0.48] - 2021-02-25
+### Changed
+- Update `hadoop` plugin ([PR230](https://github.com/observIQ/stanza-plugins/pull/230))
+  - Remove `preserve_to` parameter from severity
+- Update `vmware_vcenter` and `vmware_esxi` plugins ([PR231](https://github.com/observIQ/stanza-plugins/pull/231))
+  - Add support for TLS (requires Stanza v0.13.14 or newer)
+## [0.0.47] - 2021-02-18
+### Changed
+- Update `mysql` plugin ([PR228](https://github.com/observIQ/stanza-plugins/pull/228))
+  - Add `sql_command` field to `slow_query_log` and `general_log`
+- Update `postgresql` plugin ([PR227](https://github.com/observIQ/stanza-plugins/pull/227))
+  - Add `sql_command` field
+  - Fix statement parsing error not capturing multiline messages
+## [0.0.46] - 2021-02-15
+### Changed
+- Update `syslog` plugin ([PR225](https://github.com/observIQ/stanza-plugins/pull/225))
+  - Detect if \r is included in the syslog message and escape it
+- Fix Cassandra parameter's relevant_if typos (equal => equals) [PR224](https://github.com/observIQ/stanza-plugins/pull/224)
+## [0.0.45] - 2021-02-10
+### Changed
+- Update `syslog` plugin ([PR222](https://github.com/observIQ/stanza-plugins/pull/222))
+  - Use recombine operator to support multiline Sysl
