@@ -392,4 +392,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.43] - 2021-02-04
 ### Changed
 - Update `openshift` plugin ([PR218](https://github.com/observIQ/stanza-plugins/pull/218))
-  - Fix re
+  - Fix regex_parser to handle periods in pod name
+  - Fix regex_parser: remove `k8s_` prefix from service name
+## [0.0.42] - 2021-02-03
+### Changed
+- Update `kubernetes_cluster` plugin ([PR216](https://github.com/observIQ/stanza-plugins/pull/216)
+  - Fix timestamp parser error when parsing kublet logs.
+## [0.0.41] - 2021-02-03
+### Changed
+- Update `syslog` plugin ([PR214](https://github.com/observIQ/stanza-plugins/pull/214))
+  - Add `location` parameter with UTC default
+  - Fix invalid protocol error when starting log agent.
+- Update `kubernetes_events` plugin ([PR212](https://github.com/observIQ/stanza-plugins/pull/212))
+  - Add `SuccessfulRescale` mapping to  `severity_parser`
+- Update `kubernetes_container` plugin ([PR211](https://github.com/observIQ/stanza-plugins/pull/211)
+  - Add containerd support log parsing support
+- Update `kubernetes_cluster` plugin ([PR211](https://github.com/observIQ/stanza-plugins/pull/211)
+  - Add containerd support log parsing support
+- Update `windows_event` plugin ([PR202](https://github.com/observIQ/stanza-plugins/pull/202))
+  - Add `enable_custom_channels` and `custom_channels` parameter
+## [0.0.40] - 2021-01-26
+### Changed
+- Update `postgresql` plugin ([PR209](https://github.com/observIQ/stanza-plugins/pull/209)
+  - Change general regex parser to only par
