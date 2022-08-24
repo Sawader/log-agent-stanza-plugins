@@ -361,4 +361,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.45] - 2021-02-10
 ### Changed
 - Update `syslog` plugin ([PR222](https://github.com/observIQ/stanza-plugins/pull/222))
-  - Use recombine operator to support multiline Sysl
+  - Use recombine operator to support multiline Syslog
+- Update plugins ([PR221](https://github.com/observIQ/stanza-plugins/pull/221))
+  - `tomcat` and `nginx`
+    - Update `log_format` description
+    - Add `cluster_name` Parameter
+  - `apache_http`
+    - Update `log_format` description
+## [0.0.44] - 2021-02-04
+### Changed
+- Update plugins ([PR219](https://github.com/observIQ/stanza-plugins/pull/219))
+  - `kubernetes_container`
+    - Add `enable_nested_json_parser` parameter.
+    - Add optional parsing of messages if they match a JSON format
+  - `tomcat`
+    - Update `source` and `log_format` descriptions
+    - Update parameter order
+    - Disable parsing of messages if they match a JSON format from `kubernetes_container`
+  - `apache_http`
+    - Update `log_format` descriptions
+    - Update parameter order
+  - `nginx`
+    - Update `source` and `log_format` descriptions
+    - Update parameter order
+    - Disable parsing of messages if they match a JSON format from `kubernetes_container`
+  - `nginx_ingress`
+    - Update `log_format` descriptions
+    - Update parameter order
+    - Disable parsing of messages if they match a JSON format from `kubernetes_container`
+## [0.0.43] - 2021-02-04
+### Changed
+- Update `openshift` plugin ([PR218](https://github.com/observIQ/stanza-plugins/pull/218))
+  - Fix re
