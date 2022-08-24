@@ -414,4 +414,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.40] - 2021-01-26
 ### Changed
 - Update `postgresql` plugin ([PR209](https://github.com/observIQ/stanza-plugins/pull/209)
-  - Change general regex parser to only par
+  - Change general regex parser to only parse duration from message.
+  - Parse `client_address_port` from `client_address` field
+  - Update description for `plugin`
+- Update `journald` plugin ([PR208](https://github.com/observIQ/stanza-plugins/pull/208))
+  - Add `supported_platforms` with linux as only option
+- Update `jboss` plugin ([PR207](https://github.com/observIQ/stanza-plugins/pull/207))
+  - Update `error_id` field name to `id`
+- Update `tomcat` plugin ([PR206](https://github.com/observIQ/stanza-plugins/pull/206))
+  - Add default for `pod_name` parameter
+  - Update description for `log_format`
+- Update `nginx` plugin ([PR206](https://github.com/observIQ/stanza-plugins/pull/206))
+  - Add default for `pod_name` parameter
+  - Update description for `log_format`
+- Update `tail` plugin ([PR206](https://github.com/observIQ/stanza-plugins/pull/206))
+  - Add default for `multiline_line_start_pattern` parameter
+- Update `nginx_ingress` plugin ([PR205](https://github.com/observIQ/stanza-plugins/pull/205))
+  - Update `k8s_input_router` to match from `$record` instead of `$record.message`
+- Update `mysql` plugin ([PR204](https://github.com/observIQ/stanza-plugins/pull/204))
+  - Change slow query log `id` field to `tid`
+- Update `kubernetes_cluster` plugin
