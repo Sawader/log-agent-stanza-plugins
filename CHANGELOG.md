@@ -510,4 +510,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Update log_types
     - windows_active_directory.general -> active_directory.general
     - windows_active_directory.web_services ->  active_directory.web_services
-    - windows_active_directory.dns -
+    - windows_active_directory.dns -> active_directory.dns_server
+    - windows_active_directory.dfs_replication -> activte_directory.dfs
+    - windows_active_directory.file_replication -> active_directory.frs
+- Update `bindplane_agent` plugin ([PR176](https://github.com/observIQ/stanza-plugins/pull/176))
+  - Add log_type_router to add log_type `bindplane.agent.manager` and `bindplane.agent.launcher`
+  - Add metadata to add log_type `bindplane.agent.logagent`
+- Update `observiq_agent` plugin ([PR175](https://github.com/observIQ/stanza-plugins/pull/175))
+  - Add log_type_router to add log_type `observiq.agent.manager` and `observiq.agent.launcher`
+  - Add metadata to add log_type `observiq.agent.logagent`
+## [0.0.35] - 2021-01-11
+### Changed
+- Update `nginx_ingress` plugin
+  - Update observiq log format to be JSON format ([PR173](https://github.com/observIQ/stanza-plugins/pull/173))
+  - Update error and access `log_type` values to `nginx.ingress.error` and `nginx.ingress.access` ([PR166](https://github.com/observIQ/stanza-plugins/pull/166))
+- Update `pgbouncer` plugin ([PR172](https://github.com/observIQ/stanza-plugins/pull/172))
+  - Remove `*` from `file_path` parameter defaults
+- Update `aerospike` plugin ([PR171](https://github.com/observIQ/stanza-plu
