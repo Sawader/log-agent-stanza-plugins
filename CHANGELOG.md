@@ -453,4 +453,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Add `FailedToUpdateEndpoint` to warning severity
 - Update `kubernetes_container` plugin ([PR195](https://github.com/observIQ/stanza-plugins/pull/195))
   - Update label `resource.container.name` to `resource.k8s.container.name`
-  - Update 
+  - Update label `resource.container.id` to `resource.k8s.container.id`
+- Update `tail` plugin ([PR193](https://github.com/observIQ/stanza-plugins/pull/193))
+  - Remove parameters `poll_interval`, `file_name`, and `file_path`
+  - Set to always add file_name label
+  - Add `relevant_if` if `enable_multiline` is true to `multiline_line_start_pattern`
+  - Require `multiline_line_start_pattern` and remove default pattern
+  - Update `log_type` and `multiline_line_start_pattern` description
+## [0.0.38] - 2021-01-20
+### Changed
+- Update `jboss` plugin ([PR191](https://github.com/observIQ/stanza-plugins/pull/191))
+  - Parse `error_id` from message field if it exists
+- Update `apache_http` plugin ([PR190](https://github.com/observIQ/stanza-plugins/pull/190))
+  - Add parameter `log_format`
+  - Add observiq JSON log format parsing for access and error logs
+  - Additional fields added by observiq format
+  - `http_x_forwarded_for`, `logid.request`, `logid.connection`
+- Update `observiq_agent` plugin ([PR189](https://github.com/observIQ/stanza-plugins/pull/189))
+  - Remove `preserve` field as it has been removed from Stanza in favor of `preserve_to`
+- Update `bindplane_agent` plugin ([PR189](https://github.com/observIQ/stanza-plugins/pull/189))
+  - Remove `preserve` field
