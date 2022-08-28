@@ -569,4 +569,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Update `nginx_ingress` with source parameter
   - Add default parameter to `log_format` parameter
 - Update `vmware_esxi` plugin ([PR157](https://github.com/observIQ/stanza-plugins/pull/157))
- 
+  - Add severity parser to parse priority field.
+- Update `aerospike` plugin ([PR156](https://github.com/observIQ/stanza-plugins/pull/156))  
+  - Update regex to handle `FAILED ASSERTION` severity.
+  - Remove `preserve_to` parameter
+- Update `sap_hana` plugin ([PR155](https://github.com/observIQ/stanza-plugins/pull/155))
+  - Remove `file_path` and `preserve_to` parameter
+  - Add `file_name` and `logs_directory` parameter
+  - Exclude `nameserver_history*.trc`, `nameserver*loads*.trc`, `nameserver*unloads*.trc`, and `nameserver*executed_statements*.trc` files
+
+## [0.0.32] - 2021-01-04
+### Changed
+- Fixed exclude for `kubernetes_container` plugin ([PR152](https://github.com/observIQ/stanza-plugins/pull/152))
+- Update `jboss` plugin ([PR151](https://github.com/observIQ/stanza-plugins/pull/151))
+  - Remove `jboss_severity` field
+- Remove `vmware_esxi` plugin ([PR149](https://github.com/observIQ/stanza-plugins/pull/149))
+  - Change order of esxi_parser_3 and esxi_parser_4
+- Update `couchbase` plugin ([PR147](https://github.com/observIQ/stanza-plugins/pull/147))
+  - Update Debug, Error, and Info log regex to add missing `host` field
+  - Update Babysitter log regex to add missing `source` field
+- Update `openshift` plugin ([PR151](https://github.com/ob
