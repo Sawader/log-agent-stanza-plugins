@@ -609,4 +609,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Update regex to change field `process_start_time` to grab only process start time.
 - Update `cassandra` plugin ([PR145](https://github.com/observIQ/stanza-plugins/pull/145))
   - Add line start character to multiline line_start_pattern for gc log.
-- Update `postgresql` plugin ([PR143](https://g
+- Update `postgresql` plugin ([PR143](https://github.com/observIQ/stanza-plugins/pull/143))
+  - Parse logs more deeply to grad more data fields
+  - Added fields depending on the message. All fields are present, but some log messages will not have data for field.
+    - `duration`
+    - `error`
+    - `parameters`
+    - `statement`
+- Update `memcached` plugin ([PR142](https://github.com/observIQ/stanza-plugins/pull/142))
+  - Add `enable_memcached_journald_log_path` parameter
+  - Remove id from `journald_input` to fix id clash within Stanza
+- Update `nginx` plugin ([PR138](https://github.com/observIQ/stanza-plugins/pull/138))
+  - Move NGINX Ingress out of NGINX into its own plugin.
+  - Add parameter `log_format` to allow choice between default combined and observiq log format.
+  - Add new regex pattern to parse access logs based on a defined observiq log format.
+  - Make `pod_name` parameter required and remove default
+
+## [0.0.30] - 2020-12-23
+### Changed
+- Update `windows_dhcp` plugin ([PR141](https://github.com/observIQ/stanza-plugins/pull/141))
+  - Add `fingerprint_size` parameter to look past boilerplate preamble
+- Update `oracledb` plugin ([PR140](https://github.com/observIQ/stanza-plugins/pull/140))
+  - Fix typo in timestamp parser layout
+
+## [0.0.29] - 2020-12-21
+### Changed
+- Update `vmware_esxi` plugin ([PR139](https://
