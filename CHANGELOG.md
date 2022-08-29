@@ -588,4 +588,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update `couchbase` plugin ([PR147](https://github.com/observIQ/stanza-plugins/pull/147))
   - Update Debug, Error, and Info log regex to add missing `host` field
   - Update Babysitter log regex to add missing `source` field
-- Update `openshift` plugin ([PR151](https://github.com/ob
+- Update `openshift` plugin ([PR151](https://github.com/observIQ/stanza-plugins/pull/151))
+  - Use `_COMM` field for identifying container logs instead of `_SYSTEMD_UNIT` field
+
+## [0.0.31] - 2020-12-30
+### Removed
+- Remove `bpagent` plugin ([PR144](https://github.com/observIQ/stanza-plugins/pull/144))
+  - Split plugin into two plugins. One plugin for BindPlane and one plugin for observIQ.
+### Added
+- Add `observiq_agent` plugin ([PR144](https://github.com/observIQ/stanza-plugins/pull/144))
+  - Add `log_type` parameter to labels
+- Add `bindplane_agent` plugin ([PR144](https://github.com/observIQ/stanza-plugins/pull/144))
+  - Add `log_type` parameter to labels
+- Add `nginx_ingress` plugin ([PR137](https://github.com/observIQ/stanza-plugins/pull/137))
+  - Move NGINX Ingress out of NGINX into its own plugin.
+  - Add new regex pattern to parse access logs based on a defined spec.
+  - Add cluster_name parameter.
+### Changed
+- Update `postgresql` plugin ([PR146](https://github.com/observIQ/stanza-plugins/pull/146))
+  - Update regex to change field `process_start_time` to grab only process start time.
+- Update `cassandra` plugin ([PR145](https://github.com/observIQ/stanza-plugins/pull/145))
+  - Add line start character to multiline line_start_pattern for gc log.
+- Update `postgresql` plugin ([PR143](https://g
