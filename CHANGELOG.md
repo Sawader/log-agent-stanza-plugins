@@ -634,4 +634,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.0.29] - 2020-12-21
 ### Changed
-- Update `vmware_esxi` plugin ([PR139](https://
+- Update `vmware_esxi` plugin ([PR139](https://github.com/observIQ/stanza-plugins/pull/139))
+  - Update router and regex to support more time formats
+- Update `kubernetes_container` plugin ([PR136](https://github.com/observIQ/stanza-plugins/pull/136))
+  - Specified output for the plugin so it can be directed.
+- Update `apache_http` plugin ([PR135](https://github.com/observIQ/stanza-plugins/pull/135))
+  - Updated regex group names to be more descriptive and more inline with docs and nginx.
+  - Removed agent parsing.
+
+## [0.0.28] - 2020-12-15
+### Changed
+- Update `nginx` plugin ([PR133](https://github.com/observIQ/stanza-plugins/pull/133))
+  - Add labels `log_type` and `plugin_id` fields when input is kubernetes source
+  - Add parser for ingress controller logs
+  - Fix parsing error with 503 status codes
+
+## [0.0.27] - 2020-12-11
+### Changed
+- Update `jboss` plugin ([PR130](https://github.com/observIQ/stanza-plugins/pull/130))
+  - Add fields `category` add `thread` to regex
+- Update `hbase` plugin ([PR129](https://github.com/observIQ/stanza-plugins/pull/129))
+  - Change `thread` field regex to capture all characters
+- Update `kubernetes_cluster` plugin ([PR131]https://github.com/observIQ/stanza-plugins/pull/131))
+  - Remove reference to cluster_name_restructurer.
+
+## [0.0.26] - 20
