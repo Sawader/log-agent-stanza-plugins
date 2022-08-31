@@ -708,4 +708,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Further parse catalina parse adding fields `thread` and `tc_source`
 - Update `vmware_vcenter` plugin ([PR87](https://github.com/observIQ/stanza-plugins/pull/87))
   - Update timestamp parsing to match version 6.7 format
-- Update 
+- Update `oracledb` plugin ([PR86](https://github.com/observIQ/stanza-plugins/pull/86))
+  - Add xml parsing support to alert log
+  - Fix parsing issues in xml regex
+- Update `vmware_vcenter` plugin ([PR85](https://github.com/observIQ/stanza-plugins/pull/85))
+  - Update timestamp parsing to match version 6.7 format
+- Update `mongodb` plugin ([PR84](https://github.com/observIQ/stanza-plugins/pull/84))
+  - Add support for MongoDB 4.4 JSON log format
+- Update `aerospike` plugin ([PR83](https://github.com/observIQ/stanza-plugins/pull/83))
+  - Filter config context
+  - Split `source_location` field to `source_file` and `source_location`
+
+## [0.0.18] - 2020-11-10
+### Changed
+- Add `kubernetes` plugin back to overwrite old version
+
+## [0.0.17] - 2020-11-10
+### Changed
+- Plugin parameters are now specified as an ordered array
+- Added relevant_if to parameters
+- Split `kubernetes` plugin into `kubernete_cluster` and `kubernetes_container`
+
+## [0.0.16] - 2020-10-13
+### Changed
+
+- Update `apache_http` plugin ([PR74](https://github.com/observIQ/stanza-plugins/pull/74))
+  - Add warn severity mapping.
+  - Add trace1-8 severity mapping.
+  - Fix trace level log parsing.
+- Update `oracledb` plugin ([PR74](https://github.com/observIQ/stanza-plugins/pull/73))
+  - Add support for 1
