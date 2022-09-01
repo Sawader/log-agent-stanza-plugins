@@ -737,4 +737,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Add trace1-8 severity mapping.
   - Fix trace level log parsing.
 - Update `oracledb` plugin ([PR74](https://github.com/observIQ/stanza-plugins/pull/73))
-  - Add support for 1
+  - Add support for 12.1 alert log timestamp format.
+  - Fix parse error with audit log.
+
+## [0.0.15] - 2020-10-08
+### Changed
+
+- Added `k8s.cluster.name` to `kubernetes_events` plugin ([PR71](https://github.com/observIQ/stanza-plugins/pull/71))
+
+## [0.0.14] - 2020-10-07
+### Changed
+
+- Added `k8s.node.name` to kubernetes plugins ([PR70](https://github.com/observIQ/stanza-plugins/pull/70))
+- Added metadata to `kubernetes_event` plugin ([PR70](https://github.com/observIQ/stanza-plugins/pull/70))
+- Update `apache_http` Plugin ([PR68](https://github.com/observIQ/stanza-plugins/pull/68))
+  - Add parsing of agent field to Access Log
+  - Add severity parsing from code field to Access Log
+
+## [0.0.13] - 2020-10-01
+### Changed
+
+- Update Kubernetes Plugins ([PR66](https://github.com/observIQ/stanza-plugins/pull/66))
+  - `kubernetes`
+  - `amazon_eks`
+  - `azure_aks`
+  - `openshift`
+  - `kubernetes_events`
+
+## [0.0.12] - 2020-09-25
+### Changed
+
+- Update Tail Plugin ([PR64](https://github.com/observIQ/stanza-plugins/pull/64))
+- Apache Http plugin ([PR63](https://github.com/observIQ/stanza-plugins/pull/63))
+- Windows Event plugin ([PR62](https://github.com/observIQ/stanza-plugins/pull/62))
+- Update Plugins ([PR60](https://github.com/observIQ/stanza-plugins/pull/
