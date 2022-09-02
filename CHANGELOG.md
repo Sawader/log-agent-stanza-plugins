@@ -770,4 +770,62 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update Tail Plugin ([PR64](https://github.com/observIQ/stanza-plugins/pull/64))
 - Apache Http plugin ([PR63](https://github.com/observIQ/stanza-plugins/pull/63))
 - Windows Event plugin ([PR62](https://github.com/observIQ/stanza-plugins/pull/62))
-- Update Plugins ([PR60](https://github.com/observIQ/stanza-plugins/pull/
+- Update Plugins ([PR60](https://github.com/observIQ/stanza-plugins/pull/60))
+  - `kafka`
+  - `tail`
+  - `tomcat`
+
+## [0.0.11] - 2020-09-15
+### Added
+
+- Tail Plugin ([PR55](https://github.com/observIQ/stanza-plugins/pull/55))
+
+### Changed
+
+- Update Other Kubernetes Plugins ([PR56](https://github.com/observIQ/stanza-plugins/pull/56))
+  - `azure_aks`
+  - `amazon_eks`
+- Update Nginx Plugin ([PR58](https://github.com/observIQ/stanza-plugins/pull/58))
+
+## [0.0.10] - 2020-09-09
+### Change
+
+- Add Defaults to plugins ([PR54](https://github.com/observIQ/stanza-plugins/pull/54))
+  - `aerospike`
+  - `amazon_eks`
+  - `azure_aks`
+  - `cisco_asa`
+  - `cisco_meraki`
+  - `couchbase`
+  - `couchdb`
+  - `dcoker_swarm`
+  - `elasticsearch`
+  - `gitlab`
+  - `hadoop`
+  - `hbase`
+  - `jboss`
+  - `memchached`
+  - `microsoft_iis`
+  - `openshift`
+  - `oracledb`
+  - `pgbouncer`
+  - `redis`
+  - `sap_hana`
+  - `sqlserver`
+  - `syslog`
+  - `vmware_esxi`
+  - `vmware_vcenter`
+  - `windows_active_directory`
+  - `windows_dhcp`
+  - `zookeeper`
+- Add Defaults to plugins ([PR52](https://github.com/observIQ/stanza-plugins/pull/52))
+  - `cassandra`
+  - `ibm_db2`
+  - `kafka`
+  - `mongodb`
+  - `mysql`
+  - `nginx`
+  - `oracledb`
+  - `postgresql`
+  - `tomcat`
+- Update Defaults ([PR53](https://github.com/observIQ/stanza-plugins/
