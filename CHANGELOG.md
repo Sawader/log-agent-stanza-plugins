@@ -828,4 +828,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `oracledb`
   - `postgresql`
   - `tomcat`
-- Update Defaults ([PR53](https://github.com/observIQ/stanza-plugins/
+- Update Defaults ([PR53](https://github.com/observIQ/stanza-plugins/pull/53))
+  - `cisco_asa`
+  - `cisco_meraki`
+  - `syslog`
+  - `vmware_esxi`
+  - `vmware_vcenter`
+
+## [0.0.9] - 2020-09-01
+### Changed
+
+- Kubernetes plugin ([PR51](https://github.com/observIQ/stanza-plugins/pull/51))
+
+## [0.0.8] - 2020-09-01
+### Changed
+
+- Kubernetes plugin ([PR50](https://github.com/observIQ/stanza-plugins/pull/50))
+- Kubernetes plugin ([PR49](https://github.com/observIQ/stanza-plugins/pull/49))
+
+### Added
+
+- Windows Event plugin ([PR48](https://github.com/observIQ/stanza-plugins/pull/48))
+- Kubernetes Event plugin ([PR47](https://github.com/observIQ/stanza-plugins/pull/47))
+
+## [0.0.7] - 2020-08-24
+### Changed
+
+- Project name changed to `stanza-plugins`
+
+## [0.0.6] - 2020-08-19
+### Added
+
+- Apache HTTP plugin
+- `plugin_id` label added to all input operators
+
+## [0.0.5] - 2020-08-17
+### Added
+
+- Elasticsearch plugin ([PR16](https://github.com/observIQ/stanza-plugins/pull/16))
+- Jboss plugin ([PR17](https://github.com/observIQ/stanza-plugins/pull/17))
+- Gitlab plugin ([PR18](https://github.com/observIQ/stanza-plugins/pull/18))
+- Aerospike plugin ([PR19](https://github.com/observIQ/stanza-plugins/pull/19))
+- Memcached plugin ([PR20](https://github.com/observIQ/stanza-plugins/pull/20))
+- Syslog plugin ([PR21](htt
