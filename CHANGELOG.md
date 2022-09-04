@@ -886,4 +886,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Cisco ASA plugin ([PR35](https://github.com/observIQ/stanza-plugins/pull/35))
 - SAP Hana plugin ([PR36](https://github.com/observIQ/stanza-plugins/pull/36))
 - Apache Hadoop plugin ([PR37](https://github.com/observIQ/stanza-plugins/pull/37))
-- VMware ES
+- VMware ESXi plugin ([PR38](https://github.com/observIQ/stanza-plugins/pull/38))
+- Cisco Meraki plugin ([PR39](https://github.com/observIQ/stanza-plugins/pull/39))
+- Microsoft IIS plugin ([PR40](https://github.com/observIQ/stanza-plugins/pull/40))
+- Amazon EKS plugin ([PR41](https://github.com/observIQ/stanza-plugins/pull/41))
+- Azure AKS plugin ([PR42](https://github.com/observIQ/stanza-plugins/pull/42))
+
+### Changed
+
+- MySQL plugin ([PR26](https://github.com/observIQ/stanza-plugins/pull/26))
+
+## [0.0.3] - 2020-08-03
+### Added
+
+- Apache Kafka plugin ([PR12](https://github.com/observIQ/stanza-plugins/pull/12))
+- NGINX plugin ([PR10](https://github.com/observIQ/stanza-plugins/pull/10))
+- Apache Cassandra plugin ([PR8](https://github.com/observIQ/stanza-plugins/pull/8))
+
+### Changed
+
+- Kubernetes plugin ([PR11](https://github.com/observIQ/stanza-plugins/pull/11))
+
+## [0.0.2] - 2020-07-28
+### Added
+
+- OpenShift plugin ([PR4](https://github.com/observIQ/stanza-plugins/pull/4))
+- PostgreSQL plugin ([PR5](https://github.com/observIQ/stanza-plugins/pull/5))
+
+### Changed
+
+- Enhanced parameter metadata ([PR9](https://github.com/observIQ/stanza-plugins/pull/9))
+
+## [0.0.1] - 2020-07-21
+### Added
+
+- Kubelet message parsing to kubernetes.yaml ([PR3](https://github.com/observIQ/stanza-plugins/pull/3))
