@@ -16,4 +16,18 @@ plugin_configmap() {
     eval kubectl create configmap plugin "$args"
 }
 
-pipeline_configmap(
+pipeline_configmap() {
+    kubectl delete configmap stanza-config || true
+    kubectl create configmap stanza-config \
+        --from-file dev/k8s/config.yaml
+}
+
+deploy() {
+    kubectl delete -f dev/k8s/daemonset.yaml || true
+    kubectl apply -f dev/k8s/daemonset.yaml
+    kubectl rollout status ds/stanza
+}
+
+plugin_configmap
+pipeline_configmap
+deploy
