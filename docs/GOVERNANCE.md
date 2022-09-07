@@ -41,4 +41,4 @@ In general, we prefer that technical issues and maintainer membership are amicab
 
 ## Credits
 
-Some contents in this documents have been borrowed from the [OpenYurt](https://github.com/alibaba/openyurt
+Some contents in this documents have been borrowed from the [OpenYurt](https://github.com/alibaba/openyurt) project.
