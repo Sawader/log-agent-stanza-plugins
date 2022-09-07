@@ -11,4 +11,23 @@ The `aerospike` plugin consumes [Aerospike](https://aerospike.com/) log entries 
 
 ## Example usage
 
-### Configuratio
+### Configuration
+
+Using default log paths:
+
+```yaml
+pipeline:
+- type: aerospike
+- type: stdout
+
+```
+
+With non-standard log paths:
+
+```yaml
+pipeline:
+- type: aerospike
+  general_log_path: "/path/to/logs"
+- type: stdout
+
+```
