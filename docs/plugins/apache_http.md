@@ -10,4 +10,38 @@ The `apache_http` plugin consumes [Apache HTTP](https://httpd.apache.org/) log e
 | `enable_access_log` | `true`  | Enable to collect Apache HTTP Server access logs |
 | `access_log_path` | `"/var/log/apache2/access.log"` | Path to access log file |
 | `enable_error_log` | `true` | Enable to collect Apache HTTP Server error logs |
-| `error_log
+| `error_log_path` | `"/var/log/apache2/error.log"` | Path to error log file |
+| `start_at` | `end` | Start reading file from 'beginning' or 'end' |
+
+## Example usage
+
+### Configuration
+
+Using default log paths:
+
+```yaml
+pipeline:
+- type: apache_http
+- type: stdout
+
+```
+
+With non-standard log paths:
+
+```yaml
+pipeline:
+- type: apache_http
+  access_log_path: "/path/to/logs"
+- type: stdout
+
+```
+
+With `observiq` log format:
+
+```yaml
+pipeline:
+- type: apache_http
+  log_format: observiq
+- type: stdout
+
+```
