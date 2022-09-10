@@ -54,3 +54,53 @@ log3
   "message": "log1"
 },
 {
+  "message": "log2"
+},
+{
+  "message": "log3"
+}
+```
+
+</td>
+</tr>
+</table>
+
+### Multiline
+
+Configuration:
+```yaml
+pipeline:
+- type: file
+  file_log_path: "/test.log"
+  enable_multiline: true
+  multiline_line_start_pattern: 'START '
+- type: stdout
+```
+
+<table>
+<tr><td> `./test.log` </td> <td> Output records </td></tr>
+<tr>
+<td>
+
+```
+START log1
+log2
+START log3
+log4
+```
+
+</td>
+<td>
+
+```json
+{
+  "message": "START log1\nlog2\n"
+},
+{
+  "message": "START log3\nlog4\n"
+}
+```
+
+</td>
+</tr>
+</table>
