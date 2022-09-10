@@ -28,4 +28,11 @@ pipeline:
 With `observiq` log format:
 
 ```yaml
-pipeli
+pipeline:
+- type: haproxy
+  file_log_path:
+    - "/path/to/logs"
+  log_format: observiq
+- type: stdout
+
+```
