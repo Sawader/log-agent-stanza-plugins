@@ -33,3 +33,12 @@ kubectl create secret generic stanza-agent-credentials \
 ```
 
 Deploy Stanza
+```bash
+kubectl apply -f agent.yaml
+```
+
+## Validate
+
+Log into Google Cloud Logging
+
+![Events](./assets/entries.png)

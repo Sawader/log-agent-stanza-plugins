@@ -1,0 +1,55 @@
+---
+kind: ConfigMap
+metadata:
+  name: stanza-config
+  namespace: default
+apiVersion: v1
+data:
+  logs.yaml: |2-
+    pipeline:
+    - type: kubernetes_container
+      cluster_name: CHANGE_ME
+      # avoid parsing stanza's log output
+      exclude:
+      - /var/log/containers/stanza-*_*-*.log
+      start_at: end
+
+    - credentials_file: /stanza_home/log_destinations/google_cloud/log_credentials.json
+      type: google_cloud_output
+  events.yaml: |2-
+    pipeline:
+    - type: kubernetes_events
+      cluster_name: CHANGE_ME
+    - credentials_file: /stanza_home/log_destinations/google_cloud/log_credentials.json
+      type: google_cloud_output
+---
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: stanza-agent
+  namespace: default
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: stanza-agent
+rules:
+  - apiGroups: ["", "apps", "batch"]
+    resources:
+      - pods
+      - namespaces
+      - replicasets
+      - jobs
+      - events
+    verbs: ["get", "list", "watch"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: stanza-agent
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: stanza-agent
+subjects:
+  - kind: ServiceAc
