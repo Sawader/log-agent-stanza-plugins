@@ -52,4 +52,53 @@ roleRef:
   kind: ClusterRole
   name: stanza-agent
 subjects:
-  - kind: ServiceAc
+  - kind: ServiceAccount
+    name: stanza-agent
+    namespace: default
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: stanza
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      name: stanza
+  template:
+    metadata:
+      labels:
+        name: stanza
+    spec:
+      serviceAccountName: stanza-agent
+      containers:
+        - name: stanza
+          image: observiq/stanza:1.2.13
+          imagePullPolicy: Always
+          command: ["/stanza_home/stanza"]
+          args:
+            - --config
+            - /stanza_home/config.yaml
+            - --database
+            - /stanza_home/database/stanza.db
+            - --plugin_dir
+            - /stanza_home/plugins
+          resources:
+            limits:
+              memory: "250Mi"
+              cpu: 100m
+            requests:
+              memory: "250Mi"
+              cpu: 100m
+          volumeMounts:
+            - mountPath: /stanza_home/config.yaml
+              subPath: logs.yaml
+              name: stanza-config
+            - mountPath: /stanza_home/log_destinations/google_cloud/log_credentials.json
+              subPath: log_credentials.json
+              name: stanza-agent-credentials
+            - mountPath: /var/log
+              name: varlog
+            - mountPath: /var/lib/docker/containers
+              name: dockerlogs
+            - mo
