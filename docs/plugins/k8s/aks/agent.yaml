@@ -153,4 +153,42 @@ spec:
     spec:
       serviceAccountName: stanza-agent
       containers:
-        - image: obs
+        - image: observiq/stanza:1.2.13
+          imagePullPolicy: Always
+          name: stanza-agent
+          command:
+            - /stanza_home/stanza
+          args:
+            - --config
+            - /stanza_home/config.yaml
+            - --database
+            - /stanza_home/database/stanza.db
+            - --plugin_dir
+            - /stanza_home/plugins
+          resources:
+            limits:
+              memory: "250Mi"
+              cpu: 250m
+            requests:
+              memory: "250Mi"
+              cpu: 100m
+          volumeMounts:
+            - mountPath: /stanza_home/config.yaml
+              subPath: events.yaml
+              name: stanza-config
+            - mountPath: /stanza_home/log_destinations/google_cloud/log_credentials.json
+              subPath: log_credentials.json
+              name: stanza-agent-credentials
+            - mountPath: /stanza_home/database
+              name: stanza-agent-events-persistent-volume
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: stanza-config
+          configMap:
+            name: stanza-config
+        - name: stanza-agent-credentials
+          secret:
+            secretName: stanza-agent-credentials
+        - name: stanza-agent-events-persistent-volume
+          persistentVolume
