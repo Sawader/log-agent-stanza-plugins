@@ -14,4 +14,22 @@ The `memcached` plugin consumes [Memcached](https://memcached.org/) log entries 
 
 ### Configuration
 
-Using defaul
+Using default log paths:
+
+```yaml
+pipeline:
+- type: memcached
+- type: stdout
+
+```
+
+With non-standard log path:
+
+```yaml
+pipeline:
+- type: memcached
+  enable_memcached_journald_log_path: true
+  memcached_journald_log_path: /path/to/journald/logs
+- type: stdout
+
+```
