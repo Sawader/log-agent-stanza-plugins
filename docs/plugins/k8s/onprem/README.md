@@ -24,4 +24,20 @@ API Server.
 ## Deployment Steps
 
 Create the credentials secret. Download your Google service accounts JSON key and name it `log_credentials.json`.
-**NOTE**: The file name `log_credentials.json` is required, as that will be the name of th
+**NOTE**: The file name `log_credentials.json` is required, as that will be the name of the key that is referenced 
+when mounting the secret.
+```bash
+kubectl create secret generic stanza-agent-credentials \
+  --from-file=log_credentials.json
+```
+
+Deploy Stanza
+```bash
+kubectl apply -f agent.yaml
+```
+
+## Validate
+
+Log into Google Cloud Logging
+
+![Events](./assets/entries.png)
