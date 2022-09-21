@@ -50,4 +50,9 @@ logging format, such as upstream information and http_x_forwarded_for headers.
 
 observIQ log format configuration:
 ```
-log_format observiq '{"remote_addr":"$remote_addr","remot
+log_format observiq '{"remote_addr":"$remote_addr","remote_user":"$remote_user","time_local":"$time_local","request":"$request","status":"$status","body_bytes_sent":"$body_bytes_sent","http_referer":"$http_referer","http_user_agent":"$http_user_agent","request_length":"$request_length","request_time":"$request_time","upstream_addr":"$upstream_addr","upstream_response_length":"$upstream_response_length","upstream_response_time":"$upstream_response_time","upstream_status":"$upstream_status","proxy_add_x_forwarded_for":"$proxy_add_x_forwarded_for","bytes_sent":"$bytes_sent","time_iso8601":"$time_iso8601","upstream_connect_time":"$upstream_connect_time","upstream_header_time":"$upstream_header_time","http_x_forwarded_for":"$http_x_forwarded_for"}';
+```
+
+observIQ log format sample log:
+```
+{"remote_addr":"10.33.104.40","remote_user":"-","time_local":"25/Feb/2021:16:20:01 -0500","request":"GET /about-us?app=prod&user=james&app=stage HTTP/1.1","status":"404","body_bytes_sent":"178","http_referer":"-","http_user_agent":"curl/7.58.0","request_length":"114","request_time":"0.000","upstream_addr":"-","upstream_response_length":"-","upstream_response_time":"-","upstream_status":"-","proxy_add_x_forwarded_for":"10.33.104.40","bytes_sent":"342","time_iso8601":"2021-02-25T16:20:01-05:00","upstream_con
