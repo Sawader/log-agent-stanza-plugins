@@ -123,4 +123,48 @@ Output Entry (Error Log)
     "plugin_id": "nginx"
   },
   "record": {
-    "message": "duplicate \"log_format\" name \"oiq\" in /root/nginx.conf
+    "message": "duplicate \"log_format\" name \"oiq\" in /root/nginx.conf.bad:43",
+    "pid": "18747",
+    "tid": "18747"
+  }
+}
+```
+
+### observIQ Configuration File Source
+
+Stanza Pipeline
+
+```yaml
+pipeline:
+- type: nginx
+  format: observiq
+- type: stdout
+
+```
+
+Input Entry (Access Log)
+
+```
+{"remote_addr":"10.33.104.40","remote_user":"-","time_local":"25/Feb/2021:16:20:01 -0500","request":"GET /about-us?app=prod&user=james&app=stage HTTP/1.1","status":"404","body_bytes_sent":"178","http_referer":"-","http_user_agent":"curl/7.58.0","request_length":"114","request_time":"0.000","upstream_addr":"-","upstream_response_length":"-","upstream_response_time":"-","upstream_status":"-","proxy_add_x_forwarded_for":"10.33.104.40","bytes_sent":"342","time_iso8601":"2021-02-25T16:20:01-05:00","upstream_connect_time":"-","upstream_header_time":"-","http_x_forwarded_for":"-"}
+```
+
+Output Entry (Access Log)
+
+```json
+{
+  "timestamp": "2021-02-25T16:20:01-05:00",
+  "severity": 50,
+  "severity_text": "404",
+  "labels": {
+    "file_name": "access.log",
+    "log_type": "nginx.access",
+    "plugin_id": "nginx"
+  },
+  "record": {
+    "body_bytes_sent": "178",
+    "bytes_sent": "342",
+    "http_referer": "-",
+    "http_user_agent": "curl/7.58.0",
+    "http_x_forwarded_for": "-",
+    "method": "GET",
+    "path": "/about-us?app=prod&user=james&app=stag
