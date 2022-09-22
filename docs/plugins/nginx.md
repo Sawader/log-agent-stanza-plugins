@@ -167,4 +167,46 @@ Output Entry (Access Log)
     "http_user_agent": "curl/7.58.0",
     "http_x_forwarded_for": "-",
     "method": "GET",
-    "path": "/about-us?app=prod&user=james&app=stag
+    "path": "/about-us?app=prod&user=james&app=stage",
+    "protocol": "HTTP",
+    "protocol_version": "1.1",
+    "proxy_add_x_forwarded_for": "10.33.104.40",
+    "remote_addr": "10.33.104.40",
+    "remote_user": "-",
+    "request": "GET /about-us?app=prod&user=james&app=stage HTTP/1.1",
+    "request_length": "114",
+    "request_time": "0.000",
+    "status": "404",
+    "time_iso8601": "2021-02-25T16:20:01-05:00",
+    "upstream_addr": "-",
+    "upstream_connect_time": "-",
+    "upstream_header_time": "-",
+    "upstream_response_length": "-",
+    "upstream_response_time": "-",
+    "upstream_status": "-"
+  }
+}
+```
+
+### Default Configuration Kubernetes Source
+
+Stanza can collect Nginx logs while running on Kubernetes. Use the provided script to deploy a sample environment:
+1. Start [Minikube](https://minikube.sigs.k8s.io/docs/start/)
+2. Deploy and expose Nginx
+3. Create plugin configmap with nginx and kubernetes container plugins
+4. Deploy Stanza as a daemonset
+5. Detect the ip and port used to expose Nginx
+6. Curl the Nginx endpoint to generate a log
+7. Get Stanza's output
+
+<details>
+  <summary>click to expand `deploy.sh`</summary>
+
+```bash
+minikube start
+
+kubectl apply -f https://k8s.io/examples/application/deployment.yaml
+sleep 1
+kubectl rollout status deploy/nginx-deployment
+
+kubectl expose deployment nginx-deployment --port=80 --type=Nod
