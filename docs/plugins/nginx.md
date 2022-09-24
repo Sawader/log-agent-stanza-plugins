@@ -209,4 +209,70 @@ kubectl apply -f https://k8s.io/examples/application/deployment.yaml
 sleep 1
 kubectl rollout status deploy/nginx-deployment
 
-kubectl expose deployment nginx-deployment --port=80 --type=Nod
+kubectl expose deployment nginx-deployment --port=80 --type=NodePort
+
+kubectl create configmap plugin \
+    --from-file plugins/nginx.yaml \
+    --from-file plugins/kubernetes_container.yaml
+
+cat <<EOF | kubectl create -f -
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stanza-config
+data:
+  config.yaml: |
+    pipeline:
+    - type: nginx 
+      source: kubernetes 
+      pod: nginx-deployment 
+    - type: stdout 
+EOF
+
+kubectl apply -f https://raw.githubusercontent.com/observIQ/stanza-plugins/v0.0.88/dev/k8s/daemonset.yaml
+sleep 1
+kubectl rollout status ds/stanza
+
+TARGET_IP=$(minikube ip)
+TARGET_PORT=$(kubectl get svc nginx-deployment -o json | jq '.spec.ports[0].nodePort')
+
+curl "${TARGET_IP}:${TARGET_PORT}"
+
+kubectl logs ds/stanza
+```
+</details>
+
+Stanza Pipeline
+
+```yaml
+pipeline:
+- type: nginx
+  source: kubernetes
+  pod: nginx-deployment
+- type: stdout
+
+```
+
+Input Entry (Access Log)
+
+```
+172.17.0.1 - - [08/Dec/2021:17:40:04 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.79.1" "-"
+```
+
+Output Entry (Access Log)
+
+```json
+{
+  "timestamp": "2021-12-08T17:40:20Z",
+  "severity": 30,
+  "severity_text": "200",
+  "labels": {
+    "k8s-ns/kubernetes.io/metadata.name": "default",
+    "k8s-pod/app": "nginx",
+    "k8s-pod/pod-template-hash": "66b6c48dd5",
+    "log_type": "nginx.access",
+    "plugin_id": "nginx",
+    "stream": "stdout"
+  },
+  "resource": {
+  
