@@ -11,4 +11,23 @@ The `rabbitmq` plugin consumes [RabbitMQ](https://www.rabbitmq.com/) log entries
 
 ## Example usage
 
-### Config
+### Configuration
+
+Using default log path:
+
+```yaml
+pipeline:
+- type: rabbitmq
+- type: stdout
+
+```
+
+With non-standard log path:
+
+```yaml
+pipeline:
+- type: rabbitmq
+  daemon_log_path: "/path/to/logs"
+- type: stdout
+
+```
