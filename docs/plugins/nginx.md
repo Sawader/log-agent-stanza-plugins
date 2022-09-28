@@ -275,4 +275,28 @@ Output Entry (Access Log)
     "stream": "stdout"
   },
   "resource": {
-  
+    "k8s.cluster.name": "",
+    "k8s.container.id": "ed7fc720c68357e0eb60d457e7483d47665eec3ac8962370a865fd810778237e",
+    "k8s.container.name": "nginx",
+    "k8s.deployment.name": "nginx-deployment",
+    "k8s.namespace.name": "default",
+    "k8s.namespace.uid": "bb7abccb-368b-4921-b577-c01a1379adc0",
+    "k8s.node.name": "",
+    "k8s.pod.name": "nginx-deployment-66b6c48dd5-pxrwz",
+    "k8s.pod.uid": "11cdc1ea-4ab4-48f0-81e1-83de404cb639",
+    "k8s.replicaset.name": "nginx-deployment-66b6c48dd5"
+  },
+  "record": {
+    "body_bytes_sent": "612",
+    "http_referer": "-",
+    "http_user_agent": "curl/7.79.1",
+    "method": "GET",
+    "path": "/",
+    "protocol": "HTTP",
+    "protocol_version": "1.1",
+    "remote_addr": "172.17.0.1",
+    "remote_user": "-",
+    "status": "200"
+  }
+}
+```
