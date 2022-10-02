@@ -11,4 +11,49 @@ The `tomcat` plugin consumes [Apache Tomcat](https://tomcat.apache.org/) log ent
 | `enable_access_log` | `true` | Enable to collect Apache Tomcat access logs |
 | `access_log_path` | `"/usr/local/tomcat/logs/localhost_access_log.*.txt"` | Path to access log file |
 | `enable_catalina_log` | `true` | Enable to collect Apache Tomcat catalina logs |
-| `catali
+| `catalina_log_path` | `"/usr/local/tomcat/logs/catalina.out"` | Path to catalina log file |
+| `cluster_name` | `""` | Friendly name to be used as a resource label. Only relevant if the source is "kubernetes". |
+| `pod_name` | `'tomcat-*'` | The pod name (without the unique identifier on the end). Only relevant if the source is "kubernetes". |
+| `container_name` | `"*"` | The container name of the Nginx container. Only relevant if the source is "kubernetes". |
+| `start_at` | `end` | Start reading file from 'beginning' or 'end' |
+
+## Example usage
+
+### Configuration
+
+Using default file log paths:
+
+```yaml
+pipeline:
+- type: tomcat
+- type: stdout
+
+```
+
+Using non-default file parameters:
+
+```yaml
+pipeline:
+- type: tomcat
+  source: file
+  log_format: default
+  enable_access_log: true
+  access_log_path: "path/to/logs"
+  enable_catalina_log: true
+  catalina_log_path: "path/to/logs"
+- type: stdout
+
+```
+
+Using Kubernetes:
+
+```yaml
+pipeline:
+- type: tomcat
+  source: kubernetes
+  cluster_name: "stage"
+  pod_name: 'tomcat-*'
+  container_name: "*"
+- type: stdout
+
+```
