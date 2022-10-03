@@ -27,4 +27,30 @@ The Windows Events plugin can monitor custom channels in addition to the three c
 
 ## Configuration
 
-The Windows Events plugin supports system, application, and security ev
+The Windows Events plugin supports system, application, and security events by default, but can also support custom channels if those have been configured.
+
+```yaml
+pipeline:
+- type: windows_event
+  enable_system_events: true
+  enable_application_events: true
+  enable_security_events: true
+- type: stdout
+
+```
+
+With custom channels enabled, the `custom_channels` field can be populated with any channel found in the Windows Event Viewer.
+
+```yaml
+pipeline:
+- type: windows_event
+  enable_system_events: true
+  enable_application_events: true
+  enable_security_events: true
+  enable_custom_channels: true
+  custom_channels:
+    - 'Hardware Events'
+    - 'Key Management Service'
+- type: stdout
+
+```

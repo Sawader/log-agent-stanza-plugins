@@ -1,0 +1,18 @@
+---
+# Plugin Info
+version: 0.0.3
+title: Amazon EKS
+description: Log parser for Amazon EKS
+parameters:
+  - name: container_log_path
+    label: Containers Log Path
+    description: EKS Containers Log Path
+    type: string
+    default: "/var/log/containers/*"
+  - name: kubelet_journald_log_path
+    label: Kubelet Journald Log Path
+    description: 'Kubernetes Kubelet Journald Log path. It will read from /run/journal or /var/log/journal if this parameter is omitted'
+    type: string
+  - name: cluster_name
+    label: Cluster Name
+    description: 'Cluster Name to be added to a resource labe
