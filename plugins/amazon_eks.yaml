@@ -58,4 +58,43 @@ pipeline:
     routes:
       # It appears to be JSON so send it to be parsed as JSON.
       - output: nested_json_parser
-        expr: '$record.log != nil 
+        expr: '$record.log != nil and $record.log matches "^{.*}\\s*$"'
+      # If log field doesn't appear to be JSON then, skip nested JSON parsers
+      - output: container_regex_parser
+        expr: true
+
+  # Attempt to parse nested JSON since the log appears to be JSON
+  - id: nested_json_parser
+    type: json_parser
+    parse_from: $record.log
+    output: container_regex_parser
+
+  # Log field has been parsed if possible and now we can parse the file name field for container information.
+  - id: container_regex_parser
+    type: regex_parser
+    parse_from: $labels.file_name
+    regex: '^(?P<pod_name>[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*)_(?P<namespace>[^_]+)_(?P<container_name>.+)-(?P<container_id>[a-z0-9]{64})\.log$'
+    severity:
+      parse_from: stream
+      preserve_to: stream
+      mapping:
+        error: stderr
+        info: stdout
+    timestamp:
+      parse_from: time
+      layout: '%Y-%m-%dT%H:%M:%S.%sZ'
+
+  - id: resource_restructurer
+    type: restructure
+    ops:
+      - move:
+          from: '$record.pod_name'
+          to: '$resource["k8s.pod.name"]'
+      - move:
+          from: '$record.namespace'
+          to: '$resource["k8s.namespace.name"]'
+      - move:
+          from: '$record.container_name'
+          to: '$resource["container.name"]'
+      - move:
+          from: '$record.con
