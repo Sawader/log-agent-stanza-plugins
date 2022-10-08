@@ -97,4 +97,46 @@ pipeline:
           from: '$record.container_name'
           to: '$resource["container.name"]'
       - move:
-          from: '$record.con
+          from: '$record.container_id'
+          to: '$resource["container.id"]'
+
+  # Add kubernetes metadata
+  - id: add_kubernetes_metadata
+    type: k8s_metadata_decorator
+    output: cluster_name_restructurer
+
+  # Add kubernetes cluster name after adding metadata so it doesn't get overwritten
+  - id: cluster_name_restructurer
+    type: restructure
+    ops:
+      - add:
+          field: "$resource['k8s.cluster.name']"
+          value: "{{ $cluster_name }}"
+    output: add_labels_router
+
+  # Add label log_type
+  - id: add_labels_router
+    type: router
+    routes:
+      - output: {{ .output }}
+        expr: '$labels["k8s_pod_label/component"] == "kube-controller-manager"'
+        labels:
+          log_type: 'eks.controller'
+      - output: {{ .output }}
+        expr: '$labels["k8s_pod_label/component"]  == "kube-scheduler"'
+        labels:
+          log_type: 'eks.scheduler'
+      - output: {{ .output }}
+        expr: '$labels["k8s_pod_label/component"] == "kube-apiserver"'
+        labels:
+          log_type: 'eks.apiserver'
+      - output: {{ .output }}
+        expr: '$labels["k8s_pod_label/component"] startsWith "kube-proxy"'
+        labels:
+          log_type: 'eks.proxy'
+      - output: {{ .output }}
+        expr: true
+        labels:
+          log_type: 'eks.container'
+
+  # Use
