@@ -139,4 +139,47 @@ pipeline:
         labels:
           log_type: 'eks.container'
 
-  # Use
+  # Use journald to gather kubelet logs. Use provided path for journald if available otherwise use default locations.
+  - id: kubelet_reader
+    type: journald_input
+    # {{ if .kubelet_journald_log_path }}
+    directory: '{{ .kubelet_journald_log_path }}'
+    # {{ end }}
+    labels:
+      log_type: 'eks.kubelet'
+      plugin_id: '{{ .id }}'
+    output: kubelet_filter
+
+  # Only grab entry if it is the kubelet.service
+  - id: kubelet_filter
+    type: filter
+    expr: '$record._SYSTEMD_UNIT != "kubelet.service"'
+
+  # Move hostname to k8s node resource
+  - id: kubelet_resource
+    type: restructure
+    ops:
+      - move:
+          from: "$record._HOSTNAME"
+          to: "$resource['host.name']"
+      - move:
+          from: "MESSAGE"
+          to: "message"
+      - add:
+          field: "$resource['k8s.cluster.name']"
+          value: '{{ $cluster_name }}'
+
+  # If message field matches format then, parse it otherwise send down the pipeline.
+  - id: kubelet_message_parser_router
+    type: router
+    routes:
+      - output: message_regex_parser
+        expr: '$record.message matches "^\\w\\d{4}"'
+      - output: {{ .output }}
+        expr: true
+
+  # message field seems to match expected format.
+  - id: message_regex_parser
+    type: regex_parser
+    parse_from: message
+    regex: '(?P<severity>\w
