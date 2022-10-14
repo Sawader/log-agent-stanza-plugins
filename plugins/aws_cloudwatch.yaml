@@ -1,0 +1,42 @@
+
+# Plugin Info
+version: 0.0.2
+title: AWS Cloudwatch Logs
+description: AWS Cloudwatch Logs Input
+min_stanza_version: 1.2.6
+parameters:
+  - name: log_group_name
+    label: Log Group Name
+    description: The Cloudwatch Logs Log Group Name. Deprecated, use log_group_names or log_group_prefix.
+    type: string
+    default: ''
+    hidden: true
+  - name: log_group_names
+    label: Log Groups
+    description: List of Cloudwatch Log Group Names.
+    type: strings
+    default:
+    - ''
+  - name: log_group_prefix
+    label: Log Group Name Prefix
+    description: The log group name prefix to use, when auto detecting log group names.
+    type: string
+    default: ''
+  - name: region
+    label: Region
+    description: The AWS Region to be used
+    type: string
+    default: ''
+    required: true
+  - name: log_stream_name_prefix
+    label: Log Stream Name Prefix
+    description: The log stream name prefix to use, valid only when targeting a single log group.
+    type: string
+    default: ''
+  - name: log_stream_names
+    label: Log Stream Names
+    description: Log stream names from which to get events, valid only when targeting a single log group.
+    type: strings
+  - name: profile
+    label: Profile
+    description: Profile to use for authentication.

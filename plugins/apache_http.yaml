@@ -1,0 +1,176 @@
+
+version: 0.0.8
+title: Apache HTTP Server
+description: Log parser for Apache HTTP Server
+parameters:
+  - name: log_format
+    label: Log Format
+    description: When choosing the 'default' option, the agent will expect and parse logs in a format that matches the default logging configuration. When choosing the 'observIQ' option, the agent will expect and parse logs in an optimized JSON format that adheres to the observIQ specification, requiring an update to the apache2.conf file. See the Apache HTTP Server source page for more information.
+    type: enum
+    valid_values:
+      - default
+      - observiq
+    default: default
+  - name: enable_access_log
+    label: Access Logs
+    description: Enable to collect Apache HTTP Server access logs
+    type: bool
+    default: true
+  - name: access_log_path
+    label: Access Log Path
+    description: Path to access log file
+    type: string
+    default: "/var/log/apache2/access.log"
+    relevant_if:
+      enable_access_log:
+        equals: true
+  - name: enable_error_log
+    label: Error Logs
+    description: Enable to collect Apache HTTP Server error logs
+    type: bool
+    default: true
+  - name: error_log_path
+    label: Error Log Path
+    description: Path to error log file
+    type: string
+    default: "/var/log/apache2/error.log"
+    relevant_if:
+      enable_error_log:
+        equals: true
+  - name: start_at
+    label: Start At
+    description: Start reading file from 'beginning' or 'end'
+    type: enum
+    valid_values:
+     - beginning
+     - end
+    default: end
+# Set Defaults
+#{{$enable_error_log := default true .enable_error_log}}
+#{{$error_log_path := default "/var/log/apache2/error.log" .error_log_path}}
+#{{$enable_access_log := default true .enable_access_log}}
+#{{$access_log_path := default "/var/log/apache2/access.log" .access_log_path}}
+#{{$start_at := default "end" .start_at}}
+# {{$log_format := default "default" .log_format}}
+pipeline:
+  #{{ if $enable_access_log }}
+  - id: access_log_reader
+    type: file_input
+    include:
+      - {{ $access_log_path }}
+    start_at: {{ $start_at }}
+    labels:
+      log_type: 'apache_http.access'
+      plugin_id: {{ .id }}
+    output: '{{ if eq $log_format "default" }}access_regex_parser{{ else if eq $log_format "observiq" }}access_json_parser{{ end }}'
+  #{{ end }}
+
+  #{{ if $enable_error_log }}
+  - id: error_log_reader
+    type: file_input
+    include:
+      - {{ $error_log_path }}
+    start_at: {{ $start_at }}
+    # {{ if eq $log_format "default" }}
+    multiline:
+      line_start_pattern: '\[(?P<time>\w+ \w+ \d{2} \d{2}:\d{2}:\d{2}\.\d+ \d+)\] '
+    # {{ end }}
+    labels:
+      log_type: 'apache_http.error'
+      plugin_id: {{ .id }}
+    output: '{{ if eq $log_format "default" }}error_regex_parser{{ else if eq $log_format "observiq" }}error_json_parser{{ end }}'
+  #{{ end }}
+
+  # {{ if eq $log_format "default" }}
+  - id: access_regex_parser
+    type: regex_parser
+    regex: '^(?P<remote_addr>[^ ]*) (?P<remote_host>[^ ]*) (?P<remote_user>[^ ]*) \[(?P<time>[^\]]*)\] "(?P<method>\S+) +(?P<path>[^ ]*)( (?P<protocol>[^/]*)/(?P<protocol_version>[^\"]*)|[^\"]*)?" (?P<status>[^ ]*) (?P<body_bytes_sent>[^ ]*)(?: "(?P<http_referer>[^\"]*)" "(?P<http_user_agent>[^\"]*)"(?:\s+(?P<http_x_forwarded_for>[^ ]+))?)?'
+    timestamp:
+      parse_from: time
+      layout: '%d/%b/%Y:%H:%M:%S %z'
+    severity:
+      parse_from: status
+      preset: none
+      preserve_to: status
+      mapping:
+        info: 2xx
+        notice: 3xx
+        warning: 4xx
+        error: 5xx
+    output: {{ .output }}
+
+  - id: error_regex_parser
+    type: regex_parser
+    regex: '^\[(?P<time>\w+ \w+ \d{2} \d{2}:\d{2}:\d{2}\.\d+ \d+)\] \[(?P<module>\w+):(?P<log_level>[\w\d]+)\] \[pid (?P<pid>\d+)(?::tid (?P<tid>[\d]+))?\](?: \[client (?P<client>[^\]]*)\])? (?P<error_code>[^:]+): (?P<message>.*)'
+    timestamp:
+      parse_from: time
+      layout: '%a %b %d %T.%s %Y'
+    severity:
+      parse_from: log_level
+      mapping:
+        critical: crit
+        emergency: emerg
+        warning: warn
+        trace:
+          - trace1
+          - trace2
+          - trace3
+          - trace4
+          - trace5
+          - trace6
+          - trace7
+          - trace8
+    output: {{ .output }}
+  # {{ end }}
+
+  # {{ if eq $log_format "observiq" }}
+  - id: access_json_parser
+    type: json_parser
+    timestamp:
+      parse_from: timestamp
+      layout: '%Y-%m-%dT%H:%M:%S.%s%z'
+    severity:
+      parse_from: status
+      preset: none
+      preserve_to: status
+      mapping:
+        info: 2xx
+        notice: 3xx
+        warning: 4xx
+        error: 5xx
+    output: access_protocol_parser
+
+  - id: access_protocol_parser
+    type: regex_parser
+    parse_from: $record.protocol
+    regex: '(?P<protocol>[^/]*)/(?P<protocol_version>.*)'
+    output: {{ .output }}
+
+  - id: error_json_parser
+    type: json_parser
+    timestamp:
+      parse_from: time
+      layout: '%Y-%m-%d %H:%M:%S.%s'
+    severity:
+      parse_from: log_level
+      mapping:
+        critical: crit
+        emergency: emerg
+        warning: warn
+        trace:
+          - trace1
+          - trace2
+          - trace3
+          - trace4
+          - trace5
+          - trace6
+          - trace7
+          - trace8
+    output: error_message_parser
+
+  - id: error_message_parser
+    type: regex_parser
+    parse_from: $record.message
+    regex: '(?P<error_code>[^:]*):(?P<message>.*)'
+    output: {{ .output }}
+  # {{ end }}
