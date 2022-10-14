@@ -1,0 +1,45 @@
+# Plugin Info
+version: 0.0.1
+title: Azure Event Hub
+description: Azure Event Hub input parser
+min_stanza_version: 0.13.20
+parameters:
+  - name: namespace
+    label: Event Hub Namespace
+    description: Event Hub Namespace
+    type: string
+    default: ''
+    required: true
+  - name: event_hub_name
+    label: Event Hub Name
+    description: Event Hub Name
+    type: string
+    default: ''
+    required: true
+  - name: group
+    label: Event Hub Consumer Group
+    description: Event Hub Consumer Group
+    type: string
+    default: ''
+    required: true
+  - name: connection_string
+    label: Connection String
+    description: Event Hub Connection String
+    type: string
+    default: ''
+    required: true
+  - name: prefetch_count
+    label: Prefetch Count
+    description: Event Hub Prefetch Count
+    type: int
+    default: 1000
+  - name: start_at
+    label: Start At
+    description: Start reading file from 'beginning' or 'end'
+    type: enum
+    valid_values:
+      - beginning
+      - end
+    default: end
+  - name: log_type
+    la
