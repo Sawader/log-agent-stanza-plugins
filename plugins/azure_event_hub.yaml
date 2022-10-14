@@ -42,4 +42,30 @@ parameters:
       - end
     default: end
   - name: log_type
-    la
+    label: Log Type
+    description: Adds label log_type to identify Azure Event Hub source
+    type: string
+    default: azure_event_hub
+# Set Defaults
+# {{$namespace := default "" .namespace}}
+# {{$event_hub_name := default "" .event_hub_name}}
+# {{$group := default "" .group}}
+# {{$connection_string := default "" .connection_string}}
+# {{$prefetch_count := default 1000 .prefetch_count}}
+# {{$start_at := default "end" .start_at}}
+# {{$log_type := default "azure_event_hub" .log_type}}
+
+# Pipeline Template
+pipeline:
+  - type: azure_event_hub_input
+    namespace: '{{ $namespace }}'
+    name: '{{ $event_hub_name }}'
+    group: '{{ $group }}'
+    connection_string: '{{ $connection_string }}'
+    start_at: '{{ $start_at }}'
+    prefetch_count: {{ $prefetch_count }}
+    labels:
+      plugin_id: {{ .id }}
+      log_type: '{{ $log_type }}'
+    output: {{ .output }}
+

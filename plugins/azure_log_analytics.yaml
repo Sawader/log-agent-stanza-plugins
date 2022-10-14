@@ -1,0 +1,20 @@
+# Plugin Info
+version: 0.0.1
+title: Azure Log Analytics
+description: Azure Log Analytics input
+min_stanza_version: 0.13.20
+parameters:
+  - name: namespace
+    label: Event Hub Namespace
+    description: Event Hub Namespace
+    type: string
+    default: ''
+    required: true
+  - name: event_hub_name
+    label: Event Hub Name
+    description: Event Hub Name
+    type: string
+    default: ''
+    required: true
+  - name: group
+    labe
