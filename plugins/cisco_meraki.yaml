@@ -1,0 +1,6 @@
+# Plugin Info
+version: 0.0.9
+title: Cisco Meraki
+description: Log parser for Cisco Meraki
+min_stanza_version: 1.2.7
+supported_platform
