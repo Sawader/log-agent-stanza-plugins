@@ -3,4 +3,52 @@ version: 0.0.9
 title: Cisco Meraki
 description: Log parser for Cisco Meraki
 min_stanza_version: 1.2.7
-supported_platform
+supported_platforms:
+  - linux
+  - windows
+  - macos
+parameters:
+  - name: listen_port
+    label: Listen Port
+    description: A port which the agent will listen for syslog messages
+    type: int
+    default: 5140
+  - name: listen_ip
+    label: Listen IP
+    description: A syslog ip address of the form `<ip>`
+    type: string
+    default: "0.0.0.0"
+    advanced_config: true
+  - name: listen_address
+    label: Listen Address
+    description: Parameter Deprecated Use `listen_ip` and `listen_port` instead.
+    type: string
+    default: ""
+    advanced_config: true
+    hidden: true
+
+# Set Defaults
+# {{$listen_address := default "" .listen_address}}
+# {{$length := len $listen_address}}
+# {{$listen_ip := default "0.0.0.0" .listen_ip}}
+# {{$listen_port := default 5140 .listen_port}}
+
+# Pipeline Template
+pipeline:
+  - id: meraki_input
+    type: udp_input
+    listen_address: '{{ if eq $length 0 }}{{ $listen_ip }}:{{ $listen_port }}{{ else }}{{ $listen_address }}{{ end }}'
+    labels:
+      log_type: cisco_meraki
+      plugin_id: {{ .id }}
+    add_labels: true
+
+  - id: regex_router
+    type: router
+    default: catch_all_parser
+    routes:
+      - expr: '$record matches "^<[^>]+>[\\d]+\\s+[\\d\\.]+\\s+[^\\s]+\\s+[^\\s]+\\s+[\\s\\S]*"'
+        output: meraki_parser
+
+  - id: meraki_parser
+    type: regex
