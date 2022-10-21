@@ -46,4 +46,31 @@ parameters:
 # Set Defaults
 # {{$header := .header}}
 # {{$encoding := default "utf-8" .encoding}}
-# {{$log_type := default "csv" .log_type}
+# {{$log_type := default "csv" .log_type}}
+# {{$start_at := default "end" .start_at}}
+
+# Pipeline Template
+pipeline:
+  - type: file_input
+    start_at: '{{ $start_at }}'
+    include:
+# {{ range $i, $fp := .file_log_path  }}
+      - '{{ $fp }}'
+# {{ end }}
+# {{ if .exclude_file_log_path }}
+    exclude:
+  # {{ range $i, $efp := .exclude_file_log_path  }}
+      - '{{ $efp }}'
+  # {{ end }}
+# {{ end }}
+# {{ if $encoding }}
+    encoding: '{{ $encoding }}'
+# {{ end }}
+    include_file_name: true
+    labels:
+      plugin_id: {{ .id }}
+      log_type: '{{ $log_type }}'
+
+  - type: csv_parser
+    header: {{ $header }}
+    output: {{ .output }}
