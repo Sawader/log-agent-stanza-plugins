@@ -96,4 +96,16 @@ pipeline:
     type: regex_parser
     parse_from: $record.message
     regex: '^src=(?P<src>[^\s]*)\s*dst=(?P<dst>[^\s]*)\s*mac=(?P<mac>[^\s]*)\s*protocol=(?P<protocol>[^\s]*)\s*sport=(?P<sport>[^\s]*)\s*dport=(?P<dport>[^\s]*)\s*(?P<message>[\s\S]*)'
-    output: {{
+    output: {{.output}}
+
+  - id: message_3_parser
+    type: regex_parser
+    parse_from: $record.message
+    regex: '^src=(?P<src>[^\s]*)\s*dst=(?P<dst>[^\s]*)\s*mac=(?P<mac>[^\s]*)\s*user=(?P<user>[^\s]*)\s*(?P<message>[\s\S]*)'
+    output: {{.output}}
+
+  - id: catch_all_parser
+    if: '$record matches "^<[\\d]+>"'
+    type: regex_parser
+    regex: '^<(?P<priority>[^>]+)>(\s*)?(?P<message>[\s\S]*)'
+    output: severity_parser

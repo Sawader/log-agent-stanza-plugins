@@ -1,0 +1,9 @@
+# Plugin Info
+version: 0.0.2
+title: CSV
+description: File Input CSV Parser
+min_stanza_version: 0.13.12
+parameters:
+  - name: file_log_path
+    label: File Path
+    description: Specify a single path or multiple paths to read one or many files. You
