@@ -1,0 +1,24 @@
+# Plugin Info
+version: 0.0.2
+title: Elasticsearch
+description: Log parser for Elasticsearch
+parameters:
+  - name: enable_general_logs
+    label: General Logs
+    description: Enable to collect Elasticsearch general logs
+    type: bool
+    default: true
+  - name: general_log_path
+    label: General Logs Path
+    description: The absolute path to the Elasticsearch general logs
+    type: string
+    default: "/var/log/elasticsearch/elasticsearch.log*"
+    relevant_if:
+      enable_general_logs:
+        equals: true
+  - name: enable_deprecation_logs
+    label: Deprecation Logs
+    description: Enable to collect Elasticsearch deprecation logs
+    type: bool
+    default: true
+  - nam
