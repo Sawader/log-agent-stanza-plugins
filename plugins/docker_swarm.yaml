@@ -26,4 +26,48 @@ pipeline:
   - id: docker_swarm_input
     type: file_input
     include:
-   
+      - {{ $message_log_path }}
+    start_at: {{ $start_at }}
+    labels:
+      plugin_id: {{ .id }}
+    output: docker_swarm_parser
+
+  - id: docker_swarm_parser
+    type: regex_parser
+    regex: '^(?P<timestamp>[A-Za-z]*\s+\d+ \d+:\d+:\d+) (?P<host>[^ ]*) (?P<type>[^:]*): (?P<message>.*)'
+    timestamp:
+      parse_from: timestamp
+      layout: '%b %e %H:%M:%S'
+    output: docker_swarm_router
+
+  - id: docker_swarm_router
+    type: router
+    routes:
+      - output: dockerd_parser
+        expr: '$.type matches "dockerd"'
+        labels:
+          log_type: docker_swarm.dockerd
+      - output: containerd_parser
+        expr: '$.type matches "containerd"'
+        labels:
+          log_type: docker_swarm.containerd
+      - output: type_parser
+        expr: '$.type matches "kernel"'
+        labels:
+          log_type: docker_swarm.kernel
+      - output: type_parser
+        expr: '$.type matches "NetworkManager"'
+        labels:
+          log_type: docker_swarm.network_manager
+
+  - id: dockerd_parser
+    type: regex_parser
+    parse_from: message
+    regex: '^time="(?P<timestamp>[^"]*)" level=(?P<dockerd_severity>[^ ]*) msg=(?P<message>.*)'
+    severity:
+      parse_from: dockerd_severity
+      mapping:
+        warning: warn
+    timestamp:
+      parse_from: timestamp
+      layo
