@@ -1,0 +1,14 @@
+# Plugin Info
+version: 0.0.2
+title: File
+description: File Input Parser
+min_stanza_version: 0.13.12
+parameters:
+  - name: file_log_path
+    label: File Path
+    description: Specify a single path or multiple paths to read one or many files. You may also use a wildcard (*) to read multiple files within a directory.
+    type: strings
+    required: true
+  - name: exclude_file_log_path
+    label: Exclude File Path
+    description: Specify a single path or multiple paths to exclude one or many files from being read. You may also u

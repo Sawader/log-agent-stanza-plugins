@@ -99,4 +99,34 @@ pipeline:
 
   - id: elasticsearch_deprecation_parser
     type: regex_parser
-    regex: '^\[(?P<timestamp>[\d\-:T]+),\d+\]\[(?P<elasticsearch_severity>[A-Z]*)\s?\](?P<m
+    regex: '^\[(?P<timestamp>[\d\-:T]+),\d+\]\[(?P<elasticsearch_severity>[A-Z]*)\s?\](?P<message>[^\s].*)'
+    timestamp:
+      parse_from: timestamp
+      layout: '%Y-%m-%dT%H:%M:%S'
+    severity:
+      parse_from: elasticsearch_severity
+      preserve_to: elasticsearch_severity
+      mapping:
+        warning: warn
+    output: {{.output}}
+#{{ end }}
+
+#{{ if $enable_gc_logs }}
+  - id: elasticsearch_gc_input
+    type: file_input
+    include:
+      - {{ $gc_log_path }}
+    start_at: {{ $start_at }}
+    labels:
+      log_type: elasticsearch.gc
+      plugin_id: {{ .id }}
+    output: elasticsearch_gc_parser
+
+  - id: elasticsearch_gc_parser
+    type: regex_parser
+    regex: '^\[(?P<timestamp>[^\]]+)\]\[(?P<pid>\d+)\]\[(?P<type>[^\s]+)\s*\] (?P<message>.*)'
+    timestamp:
+      parse_from: timestamp
+      layout: '%Y-%m-%dT%H:%M:%S.%s%z'
+    output: {{.output}}
+#{{ end }}
