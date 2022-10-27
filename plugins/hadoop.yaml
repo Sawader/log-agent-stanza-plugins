@@ -13,4 +13,44 @@ parameters:
     description: The absolute path to the data node logs
     type: string
     default: "/usr/local/hadoop/logs/hadoop-*-datanode-*.log"
-    releva
+    relevant_if:
+      enable_datanode_logs:
+        equals: true
+  - name: enable_resourcemgr_logs
+    label: ResourceManager Logs
+    description: Enable the collection of ResourceManager logs
+    type: bool
+    default: true
+  - name: resourcemgr_log_path
+    label: ResourceManager Log Path
+    description: The absolute path to the DataNode logs
+    type: string
+    default: "/usr/local/hadoop/logs/hadoop-*-resourcemgr-*.log"
+    relevant_if:
+      enable_resourcemgr_logs:
+        equals: true
+  - name: enable_namenode_logs
+    label: NameNode Logs
+    description: Enable collection of Hadoop NameNode logs
+    type: bool
+    default: true
+  - name: namenode_log_path
+    label: NameNode Log Path
+    description: The absolute path to the NameNode logs
+    type: string
+    default: "/usr/local/hadoop/logs/hadoop-*-namenode-*.log"
+    relevant_if:
+      enable_namenode_logs:
+        equals: true
+  - name: start_at
+    label: Start At
+    description: Start reading file from 'beginning' or 'end'
+    type: enum
+    valid_values:
+      - beginning
+      - end
+    default: end
+
+# Set Defaults
+# {{$enable_datanode_logs := default true .enable_datanode_logs}}
+# {{$datanode_log_path := default "/usr/local/hadoop/logs/hadoop-*-da
