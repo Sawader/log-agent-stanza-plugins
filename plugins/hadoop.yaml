@@ -1,0 +1,16 @@
+# Plugin Info
+version: 0.0.3
+title: Apache Hadoop
+description: Log parser for Apache Hadoop
+parameters:
+  - name: enable_datanode_logs
+    label: DataNode Logs
+    description: Enable collection of Hadoop data node logs
+    type: bool
+    default: true
+  - name: datanode_log_path
+    label: DataNode Log Path
+    description: The absolute path to the data node logs
+    type: string
+    default: "/usr/local/hadoop/logs/hadoop-*-datanode-*.log"
+    releva
