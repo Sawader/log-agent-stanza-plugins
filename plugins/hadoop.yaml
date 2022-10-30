@@ -131,4 +131,14 @@ pipeline:
 
   - id: hadoop_namenode_parser
     type: regex_parser
-    regex: '^(?P<timestamp>\d{4}-\d{2}-
+    regex: '^(?P<timestamp>\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}),\d{3}\s(?P<hadoop_severity>[A-Z]*)\s(?P<fqcn>[A-Za-z0-9\.\$]+):\s(?P<message>(?s)\S.*\S)'
+    timestamp:
+      parse_from: timestamp
+      layout: '%Y-%m-%d %H:%M:%S'
+    severity:
+      parse_from: hadoop_severity
+      mapping:
+        warning: warn
+        critical: fatal
+    output: {{.output}}
+  # {{ end }}
