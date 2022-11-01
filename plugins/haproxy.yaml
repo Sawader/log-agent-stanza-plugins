@@ -85,4 +85,47 @@ pipeline:
   - id: tcplog_parser
     type: regex_parser
     parse_from: $record.message
-    regex: '^(\s)?(?P<frontend_ip>[^:]+):(?P<frontend_port>[^\s]+)\s+\[(?P<accept_date>[^\]]+)\]\s+(?P<frontend_name_transport>[^\s]+)\s+(?P<backend_name>[^/]+)/(?P<server_name>[^\s]+)\s+(?P<queue_wait_time>[^/]+)/(?P<server_response_time>[^/]+)/(?P<session_duration>[^\s]+)\s+(?P<bytes_read>[^\s]+)\s+(?P<termination_state>[\w-]{2})\s+(?P<process_concurrent_connections>[^/]+)/(?P<frontend_concurrent_connections>[^/]+)/(?P<backend_concurrent_connections>[^/]+)/(?P<server_concurrent_connections>[^/]+)/(?P<retries>[^\s]+)\s+(?P<server_queue>[^/
+    regex: '^(\s)?(?P<frontend_ip>[^:]+):(?P<frontend_port>[^\s]+)\s+\[(?P<accept_date>[^\]]+)\]\s+(?P<frontend_name_transport>[^\s]+)\s+(?P<backend_name>[^/]+)/(?P<server_name>[^\s]+)\s+(?P<queue_wait_time>[^/]+)/(?P<server_response_time>[^/]+)/(?P<session_duration>[^\s]+)\s+(?P<bytes_read>[^\s]+)\s+(?P<termination_state>[\w-]{2})\s+(?P<process_concurrent_connections>[^/]+)/(?P<frontend_concurrent_connections>[^/]+)/(?P<backend_concurrent_connections>[^/]+)/(?P<server_concurrent_connections>[^/]+)/(?P<retries>[^\s]+)\s+(?P<server_queue>[^/]+)/(?P<backend_queue>[\d]+)'
+    output: frontend_type_tcp_add
+
+  - id: frontend_type_tcp_add
+    type: add
+    field: frontend_type
+    value: tcp
+    output: add_info_severity
+
+  # Default severity to info
+  - id: add_info_severity
+    type: add
+    field: $record.severity
+    value: 'info'
+    output: error_severity_parser # Use error parser to parse our added info severity
+  # {{ end }}
+
+  # {{ if eq $log_format "observiq" }}
+  # Route to correct parser
+  - id: message_router
+    type: router
+    default: message_move
+    routes:
+      - output: observiq_parser
+        expr: '$record.message != nil and $record.message matches "^{.*}$|^{.*}\\n$"'
+      - output: error_parser
+        expr: '$record.message != nil and $record.message matches "^\\s*\\[[^\\]]+\\]\\s*.*"'
+        labels:
+          log_type: 'haproxy.error'
+
+  # Parse observiq format log message
+  - id: observiq_parser
+    type: json_parser
+    if: '$record.message != nil and $record.message matches "^{.*}$|^{.*}\\n$"'
+    parse_from: $record.message
+    output: status_severity_parser
+  # {{ end }}
+
+  # Group of parsers and restructure operators
+  # Parse status if it exists
+  - id: status_severity_parser
+    type: severity_parser
+    if: '$record.status != nil'
+    parse_from: $
