@@ -222,4 +222,48 @@ pipeline:
     type: move
     if: '$record.query_parameter != nil'
     from: '$record.query_parameter'
-    to: '$resource
+    to: '$resource["query_parameter"]'
+  - id: frontend_name_move
+    type: move
+    if: '$record.frontend_name != nil'
+    from: '$record.frontend_name'
+    to: '$resource["frontend_name"]'
+  - id: backend_name_move
+    type: move
+    if: '$record.backend_name != nil'
+    from: '$record.backend_name'
+    to: '$resource["backend_name"]'
+  - id: server_name_move
+    type: move
+    if: '$record.server_name != nil'
+    from: '$record.server_name'
+    to: '$resource["server_name"]'
+  - id: host_move
+    type: move
+    if: '$record.host != nil'
+    from: '$record.host'
+    to: '$resource["host"]'
+    output: {{ .output }}
+
+  # Parser error logs
+  # Severities: emerg alert crit err warning notice info debug
+  - id: error_parser
+    type: regex_parser
+    parse_from: $record.message
+    regex: ^\s*\[(?P<severity>[^\]]+)\]\s*(?P<message>.*)
+    output: error_severity_parser
+
+  - id: error_severity_parser
+    type: severity_parser
+    if: '$record.severity != nil'
+    parse_from: $record.severity
+    mapping:
+      critical: crit
+      emergency: emerg
+      error: err
+    output: {{ .output }}
+
+  # If $record.message still exists and $record.host doesn't that means we were unable to parse and just need to promote to $record
+  - id: message_move
+    type: move
+    if: $record
