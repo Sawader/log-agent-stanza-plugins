@@ -128,4 +128,53 @@ pipeline:
   - id: status_severity_parser
     type: severity_parser
     if: '$record.status != nil'
-    parse_from: $
+    parse_from: $record.status
+    preserve_to: $record.status
+    preset: none
+    mapping:
+      info: 2xx
+      notice: 3xx
+      warning: 4xx
+      error: 5xx
+    output: uri_parser
+
+  # Parse uri if it exists
+  - type: uri_parser
+    if: '$record.uri != nil'
+    parse_from: $record.uri
+    output: query_move
+
+  # Rename query to query_parameter
+  - id: query_move
+    type: move
+    if: '$record.query != nil'
+    from: $record.query
+    to: $record.query_parameter
+    output: protocol_parser
+
+  # Normalize protocol/version in JSON http_version to match regex http parser
+  - id: protocol_parser
+    type: regex_parser
+    if: '$record.http_version != nil'
+    parse_from: $record.http_version
+    regex: '(?P<protocol>[^/]*)/(?P<protocol_version>.*)'
+
+# frontend_ssl_version
+# frontend_ssl_ciphers
+# method
+# protocol
+# protocol_version
+# referer
+  # Promote fields to labels
+  - id: frontend_ssl_version_move
+    type: move
+    if: '$record.frontend_ssl_version != nil'
+    from: '$record.frontend_ssl_version'
+    to: '$labels["frontend_ssl_version"]'
+  - id: frontend_ssl_ciphers_move
+    type: move
+    if: '$record.frontend_ssl_ciphers != nil'
+    from: '$record.frontend_ssl_ciphers'
+    to: '$labels["frontend_ssl_ciphers"]'
+  - id: method_move
+    type: move
