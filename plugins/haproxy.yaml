@@ -178,3 +178,48 @@ pipeline:
     to: '$labels["frontend_ssl_ciphers"]'
   - id: method_move
     type: move
+    if: '$record.method != nil'
+    from: '$record.method'
+    to: '$labels["method"]'
+  - id: protocol_move
+    type: move
+    if: '$record.protocol != nil'
+    from: '$record.protocol'
+    to: '$labels["protocol"]'
+  - id: protocol_version_move
+    type: move
+    if: '$record.protocol_version != nil'
+    from: '$record.protocol_version'
+    to: '$labels["protocol_version"]'
+  - id: referer_move
+    type: move
+    if: '$record.referer != nil'
+    from: '$record.referer'
+    to: '$labels["referer"]'
+
+  # Promote fields to resources
+  - id: frontend_type_move
+    type: move
+    if: '$record.frontend_type != nil'
+    from: '$record.frontend_type'
+    to: '$resource["frontend_type"]'
+  - id: frontend_ip_move
+    type: move
+    if: '$record.frontend_ip != nil'
+    from: '$record.frontend_ip'
+    to: '$resource["frontend_ip"]'
+  - id: frontend_port_move
+    type: move
+    if: '$record.frontend_port != nil'
+    from: '$record.frontend_port'
+    to: '$resource["frontend_port"]'
+  - id: path_move
+    type: move
+    if: '$record.move != nil'
+    from: '$record.path'
+    to: '$resource["path"]'
+  - id: query_parameter_move
+    type: move
+    if: '$record.query_parameter != nil'
+    from: '$record.query_parameter'
+    to: '$resource
