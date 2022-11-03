@@ -266,4 +266,7 @@ pipeline:
   # If $record.message still exists and $record.host doesn't that means we were unable to parse and just need to promote to $record
   - id: message_move
     type: move
-    if: $record
+    if: $record.message != nil and $record.host == nil
+    from: $record.message
+    to: $record
+    output: {{ .output }}

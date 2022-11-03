@@ -1,0 +1,39 @@
+# Plugin Info
+version: 0.0.5
+title: Apache HBase
+description: Log parser for Apache HBase
+parameters:
+  - name: enable_master_log
+    label: Master Logs
+    description: Enable to collect HBase master logs
+    type: bool
+    default: true
+  - name: master_log_path
+    label: Master Logs Path
+    description: The absolute path to the HBase master logs
+    type: string
+    default: "/usr/local/hbase*/logs/hbase*-master-*.log"
+    relevant_if:
+      enable_master_log:
+        equals: true
+  - name: enable_region_log
+    label: Region Logs
+    description: Enable to collect HBase region logs
+    type: bool
+    default: true
+  - name: region_log_path
+    label: Region Logs Path
+    description: The absolute path to the HBase region logs
+    type: string
+    default: "/usr/local/hbase*/logs/hbase*-regionserver-*.log"
+    relevant_if:
+      enable_region_log:
+        equals: true
+  - name: enable_zookeeper_log
+    label: Zookeeper Logs
+    description: Enable to collect HBase zookeeper logs
+    type: bool
+    default: false
+  - name: zookeeper_log_path
+    label: Zookeeper Logs Path
+    description: The absolute path to the HBase zookeep
