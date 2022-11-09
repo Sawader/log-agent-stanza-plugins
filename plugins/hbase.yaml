@@ -112,4 +112,40 @@ pipeline:
 
   - id: region_standard_regex_parser
     type: regex_parser
-    if:  '$record matches "^
+    if:  '$record matches "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2},\\d{3}\\s+"'
+    regex: '^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}),\d{3}\s+(?P<hbase_severity>[A-Z]*)\s*?\[(?P<thread>[^\]]*)\]\s(?P<hbase_source>[^:]*):\s(?P<message>(?s).*)\n'
+    timestamp:
+      parse_from: timestamp
+      layout: '%Y-%m-%d %H:%M:%S'
+    severity:
+      parse_from: hbase_severity
+      mapping:
+        warning: warn
+        emergency: fatal
+    output: {{.output}}
+
+  - id: region_startup_regex_parser
+    type: regex_parser
+    if: '$record matches "^\\w+ \\w+ \\d{2} \\d{2}:\\d{2}:\\d{2} \\w+ \\d{4}"'
+    regex: '^(?P<timestamp>\w+ \w+ \d{2} \d{2}:\d{2}:\d{2} \w+ \d{4}) (?P<message>(?s).*)\n'
+    timestamp:
+      parse_from: timestamp
+      layout: '%a %h %d %H:%M:%S %Z %Y'
+    output: {{.output}}
+# {{ end }}
+
+# {{ if $enable_zookeeper_log }}
+  - id: hbase_zookeeper_input
+    type: file_input
+    include:
+      - {{ $zookeeper_log_path }}
+    multiline:
+      line_start_pattern: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}\s+|^\w+ \w+ \d{2} \d{2}:\d{2}:\d{2} \w+ \d{4}'
+    start_at: {{ $start_at }}
+    labels:
+      log_type: hbase.zookeeper
+      plugin_id: {{ .id }}
+
+  - id: zookeeper_standard_regex_parser
+    type: regex_parser
+    if:  '$record matches "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\
