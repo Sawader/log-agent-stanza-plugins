@@ -1,0 +1,21 @@
+# Plugin Info
+version: 0.0.2
+title: HTTP
+description: HTTP Input
+min_stanza_version: 1.2.10
+parameters:
+  - name: listen_port
+    label: Listen Port
+    description: A port which the agent will listen for http messages
+    type: int
+    required: true
+  - name: log_type
+    label: Type
+    description: Adds the specified 'Type' as a label to each log message.
+    type: string
+    default: http
+  - name: listen_ip
+    label: Listen IP
+    description: A ip address of the form `<ip>`
+    type: string
+    default: "0.0
