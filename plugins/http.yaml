@@ -66,4 +66,51 @@ parameters:
         equals: true
     advanced_config: true
   - name: private_key_file
-    lab
+    label: TLS private key path
+    description: File path for the X509 TLS certificate chain
+    type: string
+    default: "/opt/key"
+    relevant_if:
+      enable_tls:
+        equals: true
+    advanced_config: true
+  - name: min_version
+    label: TLS Minimum Version
+    description: 	Minimum TLS version to accept connections
+    type: enum
+    valid_values:
+    - "1.1"
+    - "1.2"
+    - "1.3"
+    default: "1.2"
+    relevant_if:
+      enable_tls:
+        equals: true
+    advanced_config: true
+  - name: enable_basic_auth
+    label: Enable Basic Authentication
+    description: Enable Username and Password authentication
+    type: bool
+    default: false
+    advanced_config: true
+  - name: username
+    label: Username
+    description: Username to use for basic authentication
+    type: string
+    default: "user"
+    relevant_if:
+      enable_basic_auth:
+        equals: true
+    advanced_config: true
+  - name: password
+    label: Password
+    description: Password to use for basic authentication
+    type: string
+    default: "password"
+    relevant_if:
+      enable_basic_auth:
+        equals: true
+    advanced_config: true
+  - name: enable_header_auth
+    label: Enable Header Authentication
+    description: Enable token authentication
