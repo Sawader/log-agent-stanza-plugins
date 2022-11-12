@@ -113,4 +113,40 @@ parameters:
     advanced_config: true
   - name: enable_header_auth
     label: Enable Header Authentication
-    description: Enable token authentication
+    description: Enable token authentication.
+    type: bool
+    default: false
+    advanced_config: true
+  - name: auth_header
+    label: Authentication Header
+    description:  Authentication header, a header that contains a token that matches one of the configured tokens
+    type: string
+    default: ""
+    relevant_if:
+      enable_header_auth:
+        equals: true
+    advanced_config: true
+  - name: tokens
+    label: Authentication Tokens
+    description: An array of token values, used to compare against the value found in the header defined with the Authentication Header
+    type: strings
+    default: []
+    relevant_if:
+      enable_header_auth:
+        equals: true
+    advanced_config: true
+
+# Set Defaults
+# {{$listen_ip := default "0.0.0.0" .listen_ip}}
+# {{$listen_port := .listen_port}}
+# {{$log_type := default "http" .log_type}}
+# {{$idle_timeout := default "60s" .idle_timeout}}
+# {{$read_timeout := default "20s" .read_timeout}}
+# {{$write_timeout := default "20s" .write_timeout}}
+# {{$max_header_size := default "1mb" .max_header_size}}
+# {{$max_body_size := default "10mb" .max_body_size}}
+# {{$enable_tls := default false .enable_tls}}
+# {{$certificate_file := default "/opt/cert" .certificate_file}}
+# {{$private_key_file := default "/opt/key" .private_key_file}}
+# {{$min_version := default "1.2" .min_version}}
+# {{$enable_basic_auth := 
