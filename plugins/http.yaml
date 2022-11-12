@@ -191,4 +191,5 @@ pipeline:
   - type: move
     if: '$record.http_body.message != nil'
     from: $record.http_body.message
-    to: $record.mes
+    to: $record.message
+    output: {{.output}}

@@ -1,0 +1,78 @@
+
+version: 0.0.7
+title: IBM Db2
+description: Log parser for IBM Db2
+parameters:
+  - name: path
+    label: Log Path
+    description: Path to the log file
+    type: string
+    default: "/home/db2inst1/sqllib/db2dump/db2diag.log"
+  - name: start_at
+    label: Start At
+    description: "Start reading file from 'beginning' or 'end'"
+    type: enum
+    valid_values:
+     - beginning
+     - end
+    default: end
+
+# Set Defaults
+# {{$path := default "/home/db2inst1/sqllib/db2dump/db2diag.log" .path}}
+# {{$start_at := default "end" .start_at}}
+
+pipeline:
+  - id: ibm_db2_reader
+    type: file_input
+    include:
+      - {{ $path }}
+    start_at: {{ $start_at }}
+    multiline:
+      line_start_pattern: '\d{4}-\d{2}-\d{2}-\d{2}.\d{2}.\d{2}.\d+\s\w{3}\n|\d{4}-\d{2}-\d{2}-\d{2}.\d{2}.\d{2}.\d{6}([-+][\d\w]{3}|[\d\w]{4})\s'
+    labels:
+      log_type: ibm_db2
+      plugin_id: {{ .id }}
+    output: ibm_db2_router
+
+  - id: ibm_db2_router
+    type: router
+    routes:
+      - output: standard_regex_parser
+        expr: $ matches '\\d{4}-\\d{2}-\\d{2}-\\d{2}.\\d{2}.\\d{2}.\\d{6}([-+][\\d\\w]{3}|[\\d\\w]{4})'
+      - output: other_regex_parser
+        expr: true
+
+  - id: standard_regex_parser
+    type: regex_parser
+    regex: '(?P<timestamp>\d{4}-\d{2}-\d{2}-\d{2}.\d{2}.\d{2}.\d{6})([-+][\d\w]{3}|[\d\w]{4}) (?P<record_id>\w+)\s+LEVEL: (?P<db2_severity>[^\n]+)\nPID\s+:\s+(?P<pid>\d+)\s+TID\s+:\s+(?P<tid>\d+)\s+(?P<message>[\s\d\D]+)'
+    timestamp:
+      parse_from: timestamp
+      layout: '%Y-%m-%d-%H.%M.%S.%f'
+    severity:
+      parse_from: db2_severity
+      mapping:
+        emergency: fatal
+        alert: severe
+        error:
+          - error
+        warning:
+          - 'Warning (OS)'
+        notice:
+          - config
+          - detail
+        info:
+          - audit
+          - event
+        debug:
+          - fine
+          - finer
+          - finest
+    output: {{ .output }}
+
+  - id: other_regex_parser
+    type: regex_parser
+    regex: '(?P<timestamp>\d{4}-\d{2}-\d{2}-\d{2}.\d{2}.\d{2}.\d+)\s\w{3}\s(?P<message>[\s\d\D]+)'
+    output: {{ .output }}
+    timestamp:
+      parse_from: timestamp
+      layout: '%Y-%m-%d-%H.%M.%S.%f'
