@@ -149,4 +149,46 @@ parameters:
 # {{$certificate_file := default "/opt/cert" .certificate_file}}
 # {{$private_key_file := default "/opt/key" .private_key_file}}
 # {{$min_version := default "1.2" .min_version}}
-# {{$enable_basic_auth := 
+# {{$enable_basic_auth := default false .enable_basic_auth}}
+# {{$username := default "" .username}}
+# {{$password := default "" .password}}
+# {{$enable_header_auth := default false .enable_header_auth}}
+# {{$auth_header := default "" .auth_header}}
+# Pipeline Template
+pipeline:
+  - type: http_input
+    listen_address: '{{ $listen_ip }}:{{ $listen_port }}'
+    labels:
+      log_type: {{$log_type}}
+      plugin_id: {{ .id }}
+    idle_timeout: {{$idle_timeout}}
+    read_timeout: {{$read_timeout}}
+    write_timeout: {{$write_timeout}}
+    max_header_size: {{$max_header_size}}
+    max_body_size: {{$max_body_size}}
+    # {{ if $enable_basic_auth }}
+    auth:
+      username: {{$username}}
+      password: {{$password}}
+    # {{ else if $enable_header_auth }}
+    auth:
+      token_header: {{$auth_header}}
+      tokens:
+      # {{ range $i, $tok := .tokens  }}
+        - '{{ $tok }}'
+      # {{ end }}
+    # {{ end }}
+    # {{ if $enable_tls }} 
+    tls:
+      enable: {{ $enable_tls }}
+      certificate: {{ $certificate_file }}
+      private_key: {{ $private_key_file }}
+      min_version: {{$min_version}}
+    # {{ end }}
+    write_to: http_body
+    output: move
+
+  - type: move
+    if: '$record.http_body.message != nil'
+    from: $record.http_body.message
+    to: $record.mes
