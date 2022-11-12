@@ -1,0 +1,37 @@
+# Plugin Info
+version: 1.0.2
+title: Journald
+description: Journald input parser
+min_stanza_version: 1.1.6
+supported_platforms:
+  - linux
+parameters:
+  - name: enable_journald_log_path
+    label: Enable Custom Journald Path
+    description: 'Enable to define custom Journald Log path. If not enabled it will read from "/run/journal" or "/var/log/journal" by default.'
+    type: bool
+    default: false
+  - name: journald_log_path
+    label: Custom Journald Log Path
+    description: 'Custom Journald Log path.'
+    type: string
+    default: /var/log/journal
+    relevant_if:
+      enable_journald_log_path:
+        equals: true
+  - name: start_at
+    label: Start At
+    description: Start reading file from 'beginning' or 'end'
+    type: enum
+    valid_values:
+      - beginning
+      - end
+    default: end
+  - name: log_type
+    label: Log Type
+    description: Adds label log_type to identify journald source.
+    type: string
+    default: journald
+  - name: poll_interval
+    label: Poll Interval
+    description: How often to
