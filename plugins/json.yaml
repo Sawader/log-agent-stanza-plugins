@@ -131,3 +131,9 @@ pipeline:
     value: {{ .id }}
 
   - id: add_log_type
+    type: add
+    field: '$labels.log_type'
+    value: '{{ $log_type }}'
+
+  - type: json_parser
+    output: {{ .output }}

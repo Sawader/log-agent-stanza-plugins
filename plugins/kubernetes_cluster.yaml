@@ -1,0 +1,265 @@
+
+version: 0.0.13
+title: Kubernetes Node
+description: Log parser for Kubernetes Node
+supported_platforms:
+  - kubernetes
+parameters:
+  - name: kubelet_journald_log_path
+    label: Kubelet Journald Log Path
+    description: 'Kubernetes Kubelet Journald Log path. It will read from /run/journal or /var/log/journal if this parameter is omitted'
+    type: string
+  - name: cluster_name
+    label: Cluster Name
+    description: 'Cluster Name to be added to a resource label'
+    type: string
+  - name: start_at
+    label: Start At
+    description: "Start reading file from 'beginning' or 'end'"
+    type: enum
+    valid_values:
+      - beginning
+      - end
+    default: end
+
+# Set Defaults
+# {{ $cluster_name := default "" .cluster_name }}
+# {{ $start_at := default "end" .start_at }}
+
+# Pipeline Template
+pipeline:
+  - id: container_reader
+    type: file_input
+    include:
+      - '/var/log/containers/kube*'
+    start_at: '{{ $start_at }}'
+    labels:
+      plugin_id: '{{ .id }}'
+    resource:
+      k8s.node.name: "EXPR(env('NODE_NAME'))"
+      k8s.cluster.name: '{{ $cluster_name }}'
+
+  - id: container_type_router
+    type: router
+    routes:
+      # Route to containerd parser if it matches containerd log format
+      - expr: '$record matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3,9}([\\+-]\\d{2}:\\d{2}|Z) std(?:out|err) [FP] .*"'
+        output: containerd_parser
+    default: docker_json_parser
+
+  # Parse containerd log from $record
+  - id: containerd_parser
+    type: regex_parser
+    regex: '^(?P<time>[^\s]+) (?P<stream>\w+) (?P<partial>\w) (?P<log>.*)'
+
+  # Recombine multiline containerd log messages
+  - id: containerd_recombine
+    type: recombine
+    combine_field: log
+    is_last_entry: "$record.partial == 'F'"
+
+  # Route Containerd time formats
+  - id: time_parser_router
+    type: router
+    routes:
+      - output: local_containerd_timestamp_parser
+        expr: '$record.time != nil and $record.time matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3,9}[\\+-]\\d{2}:\\d{2}"'
+      - output: utc_containerd_timestamp_parser
+        expr: '$record.time != nil and $record.time matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3,9}Z"'
+
+  # Containerd can have a couple timestamp formats depending if the node has local time set
+  - id: local_containerd_timestamp_parser
+    type: time_parser
+    parse_from: $record.time
+    layout: '%Y-%m-%dT%H:%M:%S.%s%j'
+    output: sev_parser
+
+  # Containerd can have a couple timestamp formats depending if the node has local time set
+  - id: utc_containerd_timestamp_parser
+    type: time_parser
+    parse_from: $record.time
+    layout: '%Y-%m-%dT%H:%M:%S.%sZ'
+    output: sev_parser
+
+  # Parse docker log format
+  - id: docker_json_parser
+    type: json_parser
+
+  # Parse time from docker log format
+  - id: docker_timestamp_parser
+    type: time_parser
+    parse_from: time
+    layout: '%Y-%m-%dT%H:%M:%S.%sZ'
+
+  # $record.stream should exist now so parse it.
+  - id: sev_parser
+    type: severity_parser
+    parse_from: stream
+    preserve_to: '$labels.stream'
+    mapping:
+      error: stderr
+      info: stdout
+
+  # Parse file name to grab resource information
+  - id: file_name_parser
+    type: regex_parser
+    parse_from: $labels.file_name
+    regex: '^(?P<pod_name>[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*)_(?P<namespace>[^_]+)_(?P<container_name>.+)-(?P<container_id>[a-z0-9]{64})\.log$'
+
+  # Move resource information from $record to $resource
+  - id: resource_restructurer
+    type: restructure
+    ops:
+      - move:
+          from: '$record.pod_name'
+          to: '$resource["k8s.pod.name"]'
+      - move:
+          from: '$record.namespace'
+          to: '$resource["k8s.namespace.name"]'
+      - move:
+          from: '$record.container_name'
+          to: '$resource["k8s.container.name"]'
+      - move:
+          from: '$record.container_id'
+          to: '$resource["k8s.container.id"]'
+
+  # Add kubernetes metadata
+  - id: add_kubernetes_metadata
+    type: k8s_metadata_decorator
+
+  # Add label log_type
+  - id: add_labels_router
+    type: router
+    routes:
+      - output: log_restructure
+        expr: '$labels["k8s-pod/component"] == "kube-controller-manager"'
+        labels:
+          log_type: 'k8s.controller'
+      - output: log_restructure
+        expr: '$labels["k8s-pod/component"]  == "kube-scheduler"'
+        labels:
+          log_type: 'k8s.scheduler'
+      - output: log_restructure
+        expr: '$labels["k8s-pod/component"] == "kube-apiserver"'
+        labels:
+          log_type: 'k8s.apiserver'
+      - output: log_restructure
+        expr: '$labels["k8s-pod/component"] startsWith "kube-proxy"'
+        labels:
+          log_type: 'k8s.proxy'
+      - output: log_restructure
+        expr: true
+        labels:
+          log_type: 'k8s.node'
+
+  # Move message from log field to $record
+  - id: log_restructure
+    type: restructure
+    ops:
+      - move:
+          from: '$record.log'
+          to: '$record.message'
+    output: glogs_parser_router
+
+  # Check if message matches glog format and send to parser if it does
+  - id: glogs_parser_router
+    type: router
+    default: {{ .output }}
+    routes:
+      - output: message_regex_parser
+        expr: '$record.message matches "^\\w\\d{4}"'
+
+  # message field seems to match expected format.
+  - id: message_regex_parser
+    type: regex_parser
+    parse_from: message
+    regex: '(?P<severity>\w)(?P<timestamp>\d{4} \d{2}:\d{2}:\d{2}.\d+)\s+(?P<pid>\d+)\s+(?P<src>[^:]*):(?P<src_line>[^\]]*)\] (?P<message>.*)'
+    severity:
+      parse_from: severity
+      mapping:
+        debug: d
+        info: i
+        warning: w
+        error: e
+        critical: c
+    timestamp:
+      parse_from: timestamp
+      layout: '%m%d %H:%M:%S.%s'
+    output: {{ .output }}
+
+  # Use journald to gather kubelet logs. Use provided path for journald if available otherwise use default locations.
+  - id: kubelet_reader
+    type: journald_input
+    # {{ if .kubelet_journald_log_path }}
+    directory: '{{ .kubelet_journald_log_path }}'
+    # {{ end }}
+    labels:
+      log_type: 'k8s.kubelet'
+      plugin_id: '{{ .id }}'
+    output: kubelet_filter
+
+  # Only grab entry if it is the kubelet.service
+  - id: kubelet_filter
+    type: filter
+    expr: '$record._SYSTEMD_UNIT != "kubelet.service"'
+
+  # Move hostname to k8s node resource
+  - id: kubelet_resource
+    type: restructure
+    ops:
+      - move:
+          from: "$record._HOSTNAME"
+          to: "$resource['host.name']"
+      - move:
+          from: "MESSAGE"
+          to: "message"
+      - add:
+          field: "$resource['k8s.cluster.name']"
+          value: '{{ $cluster_name }}'
+
+  # If message field matches format then, parse it otherwise send down the pipeline.
+  - id: kubelet_message_parser_router
+    type: router
+    default: severity_parser
+    routes:
+      - output: message_regex_parser_kubelet
+        expr: '$record.message matches "^\\w\\d{4}"'
+
+  # Severity parser for journald
+  - type: severity_parser
+    parse_from: $record.PRIORITY
+    mapping:
+      emergency: 0
+      alert: 1
+      critical: 2
+      error: 3
+      warning: 4
+      notice: 5
+      info: 6
+      debug: 7
+    output: {{ .output }}
+
+  # kubelet logs come from journald with UTC timestamps,
+  # so we ignore the timestamp given in the glog message because
+  # it is known to have the wrong time zone (host's timzone)
+  # unlike the other cluster services that run within containers
+  # using UTC time.
+  - id: message_regex_parser_kubelet
+    type: regex_parser
+    parse_from: message
+    regex: '(?P<severity>\w)(?P<drop_time>\d{4} \d{2}:\d{2}:\d{2}.\d+)\s+(?P<pid>\d+)\s+(?P<src>[^:]*):(?P<src_line>[^\]]*)\] (?P<message>.*)'
+    severity:
+      parse_from: severity
+      mapping:
+        debug: d
+        info: i
+        warning: w
+        error: e
+        critical: c
+    output: drop_time
+
+  - id: drop_time
+    type: restructure
+    ops:
+      - remove: '$record.drop_time'
+    output: {{ .output }}

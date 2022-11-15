@@ -1,0 +1,134 @@
+
+# Plugin Info
+version: 0.0.8
+title: Kubernetes Events
+description: Kubernetes Events Parser
+supported_platforms:
+  - kubernetes
+parameters:
+  - name: namespaces
+    label: Namespaces
+    description: An array of namespaces. Defaults to use all namespaces.
+    type: strings
+    default: []
+  - name: cluster_name
+    label: Cluster Name
+    description: 'Cluster Name to be added to a resource label'
+    type: string
+
+# Pipeline Template
+# {{ $cluster_name := default "" .cluster_name }}
+#
+pipeline:
+  - type: k8s_event_input
+    namespaces:
+# {{ range $i, $ns := .namespaces  }}
+      - {{ $ns }}
+# {{ end }}
+    labels:
+      plugin_id: '{{ .id }}'
+      log_type: "k8s.events"
+    resource:
+      k8s.node.name: "EXPR(env('NODE_NAME'))"
+
+  # Add metadata like annotations and daemonset name if there is a pod name
+  - type: router
+    routes:
+      - expr: '$resource["k8s.pod.name"] != ""'
+        output: k8s_metadata_decorator
+      - expr: "true"
+        output: restructure
+
+  - type: k8s_metadata_decorator
+
+  - type: restructure
+    ops:
+      - add:
+          field: '$resource["k8s.cluster.name"]'
+          value: '{{ $cluster_name }}'
+
+  - type: severity_parser
+    preset: none
+    parse_from: reason
+    preserve_to: reason
+    mapping:
+      info:
+        - Completed
+        - Created
+        - CREATE
+        - EnsuringLoadBalancer
+        - ExternalProvisioning
+        - FileSystemResizeSuccessful
+        - Killing
+        - NodeAllocatableEnforced
+        - NodeReady
+        - NodeSchedulable
+        - NodeHasSufficientMemory
+        - NodeHasSufficientPID
+        - NodeHasNoDiskPressure
+        - Pulled
+        - Pulling
+        - RegisteredNode
+        - RELOAD
+        - SandboxChanged
+        - SawCompletedJob
+        - ScalingReplicaSet
+        - Scheduled
+        - Started
+        - Starting
+        - SuccessfulDelete
+        - SuccessfulAttachVolume
+        - SuccessfulCreate
+        - SuccessfulMountVolume
+        - SuccessfulRescale
+        - Sync
+        - LeaderElection
+        - Provisioning
+        - ProvisioningSucceeded
+        - UPDATE
+        - VolumeResizeSuccessful
+      warning:
+        - AlreadyMountedVolume
+        - ContainerGCFailed
+        - Evicted
+        - ExceededGracePeriod
+        - FailedBinding
+        - FailedCreatePodSandBox
+        - FailedKillPod
+        - FailedNodeAllocatableEnforcement
+        - FailedPostStartHook
+        - FailedPreStopHook
+        - FailedSync
+        - FailedToUpdateEndpoint
+        - FailedValidation
+        - HostPortConflict
+        - ImageGCFailed
+        - InspectFailed
+        - InvalidDiskCapacity
+        - NetworkNotReady
+        - NodeSysctlChange
+        - Preempting
+        - ProbeWarning
+        - Rebooted
+        - Unhealthy
+      error:
+        - BackOff
+        - FailedCreatePodContainer
+        - FailedMountOnFilesystemMismatch
+        - FailedPodSandBoxStatus
+        - FailedScheduling
+        - FileSystemResizeFailed
+        - FreeDiskSpaceFailed
+        - KubeletSetupFailed
+        - OOMKilling
+        - VolumeResizeFailed
+      critical:
+        - ErrImageNeverPull
+        - ErrImagePull
+        - Failed
+        - FailedAttachVolume
+        - FailedMapVolume
+        - FailedMount
+        - NodeNotReady
+        - NodeNotSchedulable
+    output: {{ .output }}
