@@ -11,4 +11,45 @@ supported_platforms:
 parameters:
   - name: source
     label: Log source
-    description: Use this field to specify where your logs are coming from. When choosing the 'file' option, the agent reads in logs from the log paths specified below.  When choosing the 'Kubernetes' options, the agent reads logs from /var/log/containers based on the Pod and Container specified b
+    description: Use this field to specify where your logs are coming from. When choosing the 'file' option, the agent reads in logs from the log paths specified below.  When choosing the 'Kubernetes' options, the agent reads logs from /var/log/containers based on the Pod and Container specified below.
+    type: enum
+    valid_values:
+      - file
+      - kubernetes
+    default: file
+  - name: cluster_name
+    label: Cluster Name
+    description: 'Cluster Name to be added to a resource label'
+    type: string
+    default: ""
+    relevant_if:
+      source:
+        equals: kubernetes
+  - name: pod_name
+    label: Pod Name
+    description: The pod name (without the unique identifier on the end)
+    type: string
+    required: true
+    default: ""
+    relevant_if:
+      source:
+        equals: kubernetes
+  - name: container_name
+    label: Container Name
+    description: The container name
+    type: string
+    default: "*"
+    relevant_if:
+      source:
+        equals: kubernetes
+  - name: file_log_path
+    label: File Path
+    description: Specify a single path or multiple paths to read one or many files. You may also use a wildcard (*) to read multiple files within a directory.
+    type: strings
+    relevant_if:
+      source:
+        equals: file
+  - name: exclude_file_log_path
+    label: Exclude File Path
+    description: Specify a single path or multiple paths to exclude one or many files from being read. You may also use a wildcard (*) to exclude multiple files from being read within a directory.
+    type:
