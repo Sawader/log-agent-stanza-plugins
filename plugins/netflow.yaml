@@ -1,0 +1,36 @@
+# Plugin Info
+version: 0.0.3
+title: Netflow
+description: Log parser for Netflow
+min_stanza_version: 1.1.0
+parameters:
+  - name: listen_port
+    label: Listen Port
+    description: A port which the agent will listen for syslog messages
+    type: int
+    default: 2055
+  - name: netflow_version
+    label: Netflow Version
+    description: The netflow version (`v5`, `v9 / IPFIX`)
+    type: enum
+    valid_values:
+      - v5
+      - ipfix
+    required: true
+  - name: sampling_enable
+    label: Sampling
+    description: Enable Netflow sampling
+    type: bool
+    default: false
+  - name: sampling_drop_rate
+    label: Sampling Drop Rate
+    description: The probability an entry is dropped. A value of 1.0 will drop 100% of matching entries, while a value of 0.0 will drop 0%.
+    type: enum
+    valid_values:
+      - 0.0
+      - 0.1
+      - 0.2
+      - 0.3
+      - 0.4
+      - 0.5
+      - 0.
