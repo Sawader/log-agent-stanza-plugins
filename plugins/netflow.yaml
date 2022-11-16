@@ -74,4 +74,13 @@ pipeline:
     plugin_id: {{ .id }}
     netflow_version: {{ $netflow_version  }}
 
-#
+# {{ if $sampling_enable }}
+- type: filter
+  expr: 'true'
+  drop_ratio: {{ $sampling_drop_rate }}
+# {{ end }}
+
+# Remove goflow specific field
+- type: remove
+  field: $record.type
+  output: {{ .output }}
