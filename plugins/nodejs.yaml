@@ -52,4 +52,52 @@ parameters:
   - name: exclude_file_log_path
     label: Exclude File Path
     description: Specify a single path or multiple paths to exclude one or many files from being read. You may also use a wildcard (*) to exclude multiple files from being read within a directory.
-    type:
+    type: strings
+    default: []
+    relevant_if:
+      source:
+        equals: file
+  - name: encoding
+    label: Encoding
+    description: Specify the encoding of the file(s) being read. In most cases, you can leave the default option selected.
+    type: enum
+    valid_values:
+      - utf-8
+      - utf-16le
+      - utf-16be
+    default: utf-8
+    relevant_if:
+      source:
+        equals: file
+  - name: start_at
+    label: Start At
+    description: Start reading file from 'beginning' or 'end'
+    type: enum
+    valid_values:
+      - beginning
+      - end
+    default: end
+# Set Defaults
+# {{$source := default "file" .source}}
+# {{$cluster_name := default "" .cluster_name}}
+# {{$pod_name := default "" .pod_name}}
+# {{$container_name := default "*" .container_name}}
+# {{$encoding := default "utf-8" .encoding}}
+# {{$start_at := default "end" .start_at}}
+
+# Pipeline Template
+pipeline:
+  # {{ if eq $source "kubernetes" }}
+  - type: kubernetes_container
+    pod_name: '{{ $pod_name }}'
+    container_name: '{{ $container_name }}'
+    cluster_name: '{{ $cluster_name }}'
+    start_at: '{{ $start_at }}'
+    enable_nested_json_parser: false
+    exclude:
+      - '/var/log/containers/stanza*'
+  # {{ end }}
+
+  # {{ if eq $source "file" }}
+  - type: file_input
+    start_at: "{{ $start
