@@ -100,4 +100,64 @@ pipeline:
 
   # {{ if eq $source "file" }}
   - type: file_input
-    start_at: "{{ $start
+    start_at: "{{ $start_at }}"
+    include:
+      # {{ range $i, $fp := .file_log_path  }}
+      - "{{ $fp }}"
+      # {{ end }}
+    # {{ if .exclude_file_log_path }}
+    exclude:
+      # {{ range $i, $efp := .exclude_file_log_path  }}
+      - "{{ $efp }}"
+      # {{ end }}
+    # {{ end }}
+    # {{ if $encoding }}
+    encoding: '{{ $encoding }}'
+    # {{ end }}
+    include_file_name: true
+  # {{ end }}
+
+  - id: add_log_type
+    type: add
+    field: '$labels.log_type'
+    value: 'nodejs'
+
+  - id: add_plugin_id
+    type: add
+    field: '$labels.plugin_id'
+    value: '{{ .id }}'
+
+  - id: nodejs_json_parser
+    type: json_parser
+
+  - id: flatten_meta_req
+    type: flatten
+    if: '$record.meta != nil and $record.meta.req != nil'
+    field: meta.req
+
+  - id: flatten_meta_res
+    type: flatten
+    if: '$record.meta != nil and $record.meta.res != nil'
+    field: meta.res
+
+  - id: flatten_meta
+    if: '$record.meta != nil'
+    type: flatten
+    field: meta
+
+  - type: add
+    if: '$record.httpVersion != nil'
+    field: 'protocol'
+    value: 'http'
+
+  - id: httpVersion_move
+    type: move
+    if: '$record.httpVersion != nil'
+    from: httpVersion
+    to: protocol_version
+
+  - id: originalUrl_move
+    type: move
+    if: '$record.originalUrl != nil'
+    from: originalUrl
+ 
