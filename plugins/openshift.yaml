@@ -1,0 +1,13 @@
+---
+version: 0.0.9
+title: Openshift
+description: Log parser for Openshift
+min_stanza_version: 1.1.6
+supported_platforms:
+  - openshift
+parameters:
+  - name: journald_log_path
+    label: Containers Log Path
+    description: The directory where the journald logs are located. Defaults to '/var/log/journal'.
+    type: string
+   
