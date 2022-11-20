@@ -10,4 +10,45 @@ parameters:
     label: Containers Log Path
     description: The directory where the journald logs are located. Defaults to '/var/log/journal'.
     type: string
-   
+    default: "/var/log/journal"
+  - name: start_at
+    label: Start At
+    description: Start reading file from 'beginning' or 'end'. Defaults to 'end'.
+    type: enum
+    valid_values:
+      - beginning
+      - end
+    default: end
+  - name: cluster_name
+    label: Cluster Name
+    description: 'Cluster Name to be added to a resource label'
+    type: string
+  - name: enable_container_logs
+    label: Enable Container Logs
+    description: Enable collection of container logs
+    type: bool
+    default: true
+  - name: enable_docker_logs
+    label: Enable Docker Daemon Logs
+    description: Enable collection of the Docker Daemon logs
+    type: bool
+    default: true
+  - name: enable_openshift_logs
+    label: Enable Openshift logs
+    description: Enable collection of Openshift unit logs
+    type: bool
+    default: true
+  - name: enable_metadata
+    label: Enable Metadata
+    description: Attach metadata to entries https://github.com/observIQ/stanza/blob/main/docs/operators/k8s_metadata_decorator.md
+    type: bool
+    default: true
+  - name: poll_interval
+    label: Journald Poll Interval
+    description: How often to poll journald.
+    type: string
+    default: 200ms
+
+# Set Defaults
+# {{ $journald_log_path := default "/var/log/journal" .journald_log_path }}
+# {{ $enable_container_logs := defa
