@@ -106,4 +106,48 @@ pipeline:
     type: restructure
     ops:
       - move:
-    
+          from: k8s_metadata.namespace
+          to: '$resource["k8s.namespace.name"]'
+      - move:
+          from: k8s_metadata.pod_name
+          to: '$resource["k8s.pod.name"]'
+      - add:
+          value_expr: $record.k8s_metadata.service_name
+          field: '$labels.log_type'
+      - move:
+          from: _HOSTNAME
+          to: '$resource["host.name"]'
+      - move:
+          from: MESSAGE
+          to: '$record'
+
+# {{ if $enable_metadata }}
+  # Decorate entries with k8s metadata
+  - type: k8s_metadata_decorator
+# {{ end }}
+
+  # Add kubernetes cluster name after adding metadata so it doesn't get overwritten
+  - id: cluster_name_restructurer
+    type: restructure
+    ops:
+      - add:
+          field: "$resource['k8s.cluster.name']"
+          value: "{{ $cluster_name }}"
+    output: {{ .output }}
+
+  # For openshift logs, promote hostname to labels and remove all but message
+  - id: message_retainer
+    type: restructure
+    ops:
+      - move:
+          from: _HOSTNAME
+          to: '$resource["host.name"]'
+      - move:
+          from: MESSAGE
+          to: '$record'
+    output: message_regex_parser
+
+  # Parse the message
+  - id: message_regex_parser
+    type: regex_parser
+    regex: '(?P<severity>\w)(?P<timestamp>\d{4} \d{2}:\d{2}:\d{2}.\d+)\s+(?P<pid>\d+)\s+(?P<sou
