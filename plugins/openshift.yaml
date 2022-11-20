@@ -51,4 +51,29 @@ parameters:
 
 # Set Defaults
 # {{ $journald_log_path := default "/var/log/journal" .journald_log_path }}
-# {{ $enable_container_logs := defa
+# {{ $enable_container_logs := default true .enable_container_logs }}
+# {{ $enable_docker_logs := default true .enable_docker_logs }}
+# {{ $enable_openshift_logs := default true .enable_openshift_logs }}
+# {{ $enable_metadata := default true .enable_metadata }}
+# {{ $cluster_name := default "" .cluster_name }}
+# {{ $start_at := default "end" .start_at }}
+# {{$poll_interval := default "200ms" .poll_interval}}
+
+pipeline:
+  - type: journald_input
+    directory: '{{ $journald_log_path }}'
+    start_at: '{{ $start_at }}'
+    labels:
+      plugin_id: '{{ .id }}'
+    poll_interval: '{{ $poll_interval }}'
+
+  - type: router
+    routes:
+      # Ignore logs written by Stanza to avoid circular parsing
+      - expr: '$record._COMM == "dockerd-current" and $record.CONTAINER_NAME != nil and $record.CONTAINER_NAME matches "stanza"'
+        output: drop_output
+      # Ignore logs written by observiq-agent to avoid circular parsing
+      - expr: '$record._COMM == "dockerd-current" and $record.CONTAINER_NAME != nil and $record.CONTAINER_NAME matches "observiq-agent"'
+        output: drop_output
+      # Ignore logs written by bindplane-agent to avoid circular parsing
+      - expr: '$record._COMM == "dockerd-current" and $record.CONTAINER_NAME != nil and $rec
