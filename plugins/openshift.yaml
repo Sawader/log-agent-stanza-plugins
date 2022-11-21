@@ -150,4 +150,16 @@ pipeline:
   # Parse the message
   - id: message_regex_parser
     type: regex_parser
-    regex: '(?P<severity>\w)(?P<timestamp>\d{4} \d{2}:\d{2}:\d{2}.\d+)\s+(?P<pid>\d+)\s+(?P<sou
+    regex: '(?P<severity>\w)(?P<timestamp>\d{4} \d{2}:\d{2}:\d{2}.\d+)\s+(?P<pid>\d+)\s+(?P<source>[^ \]]+)\] (?P<message>.*)'
+    severity:
+      parse_from: severity
+      mapping:
+        debug: d
+        info: i
+        warning: w
+        error: e
+        critical: c
+    timestamp:
+      parse_from: timestamp
+      layout: '%m%d %H:%M:%S.%s'
+    output: {{ .output }}
