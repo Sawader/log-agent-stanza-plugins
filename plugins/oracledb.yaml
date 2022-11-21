@@ -33,4 +33,33 @@ parameters:
     relevant_if:
       enable_alert_log:
         equals: true
-  - 
+  - name: enable_listener_log
+    label: Listener Logs
+    description: Enable to collect OracleDB listener logs
+    type: bool
+    default: true
+  - name: listener_log_path
+    label: Listener Log Path
+    description: Path to the listener log file
+    type: string
+    default: "/u01/app/oracle/product/*/dbhome_1/diag/tnslsnr/*/listener/alert/log.xml"
+    relevant_if:
+      enable_listener_log:
+        equals: true
+  - name: start_at
+    label: Start At
+    description: Start reading file from 'beginning' or 'end'
+    type: enum
+    valid_values:
+     - beginning
+     - end
+    default: end
+
+# Set Defaults
+# {{$enable_audit_log := default true .enable_audit_log}}
+# {{$audit_log_path := default "/u01/app/oracle/product/*/dbhome_1/admin/*/adump/*.aud" .audit_log_path}}
+# {{$enable_truncate_audit_action := default true .enable_truncate_audit_action}}
+# {{$enable_alert_log := default true .enable_alert_log}}
+# {{$alert_log_path := default "/u01/app/oracle/product/*/dbhome_1/diag/rdbms/*/*/trace/alert_*.log" .alert_log_path}}
+# {{$enable_listener_log := default true .enable_listener_log}}
+# {{$listener_log_path := default "/u01/app/oracle/product/*/dbh
