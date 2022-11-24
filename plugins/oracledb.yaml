@@ -92,4 +92,16 @@ pipeline:
 
   - id: audit_regex_parser_action
     type: regex_parser
-    regex: '^(?P<timestamp>\w+ \w+\s{1,2}\d{1,2} \d{2}:\d{2}:\d{2} \d{4} [-+]\d{2}:\d{2})\nLENGTH : \D(?P<length>\d*)\D\nACTION :\[\d+\]\s+\D(?P<action>[\d\w[:ascii:]]+?)\D\nDATABASE USER:\[\d+\]\s+\D(?P<database_user>[^\s]+)\D
+    regex: '^(?P<timestamp>\w+ \w+\s{1,2}\d{1,2} \d{2}:\d{2}:\d{2} \d{4} [-+]\d{2}:\d{2})\nLENGTH : \D(?P<length>\d*)\D\nACTION :\[\d+\]\s+\D(?P<action>[\d\w[:ascii:]]+?)\D\nDATABASE USER:\[\d+\]\s+\D(?P<database_user>[^\s]+)\D\n(PRIVILEGE :\[\d+\]\s+\D(?P<privilege>[^\s]+)\D\n)?(CLIENT USER:\[\d+\]\s+\D(?P<client_user>[^\s]+|)\D\n)?(CLIENT TERMINAL:\[\d+\]\s+\D(?P<client_terminal>[^\s]+|)\D\n)?(STATUS:\[\d+\]\s+\D(?P<status_code>[^\s]+|)\D\n)?(DBID:\[\d+\]\s\D(?P<dbid>[^\s]+|)\D\n)?(SESSIONID:\[\d+\]\s+\D(?P<sessionid>[^\s]+|)\D\n)?(USERHOST:\[\d+\]\s+\D(?P<userhost>[^\s]+|)\D\n)?(CLIENT ADDRESS:\[\d+\]\s+\D(?P<client_address>[^\s]+|)\D\n)?(ACTION NUMBER:\[\d+\]\s+\D(?P<action_number>[^\s]+|)\D\n)?'
+    timestamp:
+      parse_from: timestamp
+      layout: '%a %h %g %H:%M:%S %Y %j'
+    # {{ if $enable_truncate_audit_action }}
+    output: audit_action_restructurer
+    # {{ else }}
+    output: {{ .output }}
+    # {{ end }}
+
+  - id: audit_regex_parser_session
+    type: regex_parser
+    regex: '^(?P<timestamp>\w+ \w+\s{1,2}\d{1,2} \d{2}:\d{2}:\d{2} \d{4} [-+]\d{2}:\d{2})\nLENGTH: \D(?P<length>\d*)\D\n(SESSIONID:\[\d+\]\s+\D(?P<sessionid>[^\s]+|)\D[\n\s]+)?(ENTRYID:\[\d+\]\s+\D(?P<entryid>[^\s]+|)\D[\n\s]+)?(STATEMENT:\[\d+\]\s+\D(?P<statement>[^\s]+|)\D[\n\s]+)?(USERID:\[\d+\]\s+\D(?P<userid>[^\s]+|)\D[\n\s]+)?(USERHOST:\[\d+\]\s+\D(?P<userhost>[^\s]+|)\D[\n\s]+)?(TERMINAL:\[\d+\]\s+\D(?P<terminal>[\d\w[:ascii:]]+?|)\D[\n\s]+)?ACTION:\[\d+\]\s+\D(?P<action>[\d\w[:ascii:]]+?
