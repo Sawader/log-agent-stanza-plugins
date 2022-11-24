@@ -62,4 +62,34 @@ parameters:
 # {{$enable_alert_log := default true .enable_alert_log}}
 # {{$alert_log_path := default "/u01/app/oracle/product/*/dbhome_1/diag/rdbms/*/*/trace/alert_*.log" .alert_log_path}}
 # {{$enable_listener_log := default true .enable_listener_log}}
-# {{$listener_log_path := default "/u01/app/oracle/product/*/dbh
+# {{$listener_log_path := default "/u01/app/oracle/product/*/dbhome_1/diag/rdbms/*/*/alert/log.xml" .listener_log_path}}
+# {{$start_at := default "end" .start_at}}
+
+# Pipeline Template
+pipeline:
+  # {{ if $enable_audit_log }}
+  - id: audit_reader
+    type: file_input
+    include:
+      - {{ $audit_log_path }}
+    start_at: {{ $start_at }}
+    multiline:
+      line_start_pattern: '\w+\s+\w+\s{1,2}\d{1,2}\s+\d{2}:\d{2}:\d{2}\s+\d{4}\s+[-+]\d{2}:\d{2}\n|^Audit [fF]ile '
+    labels:
+      log_type: 'oracledb.audit'
+      plugin_id: {{ .id }}
+    output: audit_router
+
+  - id: audit_router
+    type: router
+    routes:
+      - output: audit_regex_parser_action
+        expr: $ matches '\\w+ \\w+\\s{1,2}\\d{1,2} \\d{2}:\\d{2}:\\d{2} \\d{4} [-+]\\d{2}:\\d{2}\\nLENGTH\\s:\\s\\D\\d+\\D\\nACTION'
+      - output: audit_regex_parser_session
+        expr: $ matches '\\w+ \\w+\\s{1,2}\\d{1,2} \\d{2}:\\d{2}:\\d{2} \\d{4} [-+]\\d{2}:\\d{2}\\nLENGTH:\\s\\D\\d+\\D\\nSESSION'
+      - output: server_start_regex_parser
+        expr: $ startsWith 'Audit file '
+
+  - id: audit_regex_parser_action
+    type: regex_parser
+    regex: '^(?P<timestamp>\w+ \w+\s{1,2}\d{1,2} \d{2}:\d{2}:\d{2} \d{4} [-+]\d{2}:\d{2})\nLENGTH : \D(?P<length>\d*)\D\nACTION :\[\d+\]\s+\D(?P<action>[\d\w[:ascii:]]+?)\D\nDATABASE USER:\[\d+\]\s+\D(?P<database_user>[^\s]+)\D
