@@ -123,4 +123,34 @@ pipeline:
     type: restructure
     ops:
       - add:
-          field:
+          field: "action"
+          value_expr: 'len($.action) > 150000 ? $.action[0:150000] + "... Action has " + $.length + " characters which is over the 150000 characters limit, truncating action" : $.action'
+    output: {{ .output }}
+  # {{ end }}
+
+  # {{ if $enable_alert_log }}
+  - id: alert_reader
+    type: file_input
+    include:
+      - {{ $alert_log_path }}
+    start_at: {{ $start_at }}
+    multiline:
+      line_start_pattern: '^\w+ \w+ \d{2} \d{2}:\d{2}:\d{2} \d{4}|\d{4}-\d{2}-\d{2}T\d{1,}:\d{2}:\d{2}.\d+[+-]\d+:\d+|^<msg time=\D\d{4}-\d{2}-\d{2}T\d{1,}:\d{2}:\d{2}.\d+[+-]\d+:\d+'
+    labels:
+      log_type: 'oracledb.alert'
+      plugin_id: {{ .id }}
+    output: alert_router
+
+  - id: alert_router
+    type: router
+    routes:
+      - output: xml_alert_regex_parser
+        expr: $ matches '^<msg time=\\D\\d{4}-\\d{2}-\\d{2}T\\d{1,}:\\d{2}:\\d{2}.\\d+[+-]\\d+:\\d+'
+      - output: alert121_regex_parser
+        expr: $ matches '^\\w+ \\w+ \\d{2} \\d{2}:\\d{2}:\\d{2} \\d{4}'
+      - output: alert122_regex_parser
+        expr: $ matches '^\\d{4}-\\d{2}-\\d{2}T\\d{1,}:\\d{2}:\\d{2}.\\d+[+-]\\d+:\\d+'
+  
+  # Alert log looks to be xml attempt to parse with regex
+  - id: xml_alert_regex_parser
+    type: regex_parser
