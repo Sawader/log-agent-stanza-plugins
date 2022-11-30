@@ -175,4 +175,41 @@ pipeline:
     regex: '(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{1,}:\d{2}:\d{2}.\d+[+-]\d+:\d+)\n((?P<message>[\d\w[:ascii:]]*))?'
     timestamp:
       parse_from: timestamp
-      layout:
+      layout: '%Y-%m-%dT%T.%s%j'
+    output: regex_empty_message_filter
+
+  - id: regex_empty_message_filter
+    type: filter
+    expr: '$record.message == ""'
+    output: {{ .output }}
+
+  # {{ end }}
+
+  # {{ if $enable_listener_log }}
+  - id: listener_reader
+    type: file_input
+    include:
+      - {{ $listener_log_path }}
+    start_at: {{ $start_at }}
+    multiline:
+      line_start_pattern: '/[\w\d/]+:|\\[\w\d\\]+:|\d{4}-\d{2}-\d{2}T\d{1}:\d{2}:\d{2}.\d+[+-]\d+:\d+|<msg time=\D\d{4}-\d{2}-\d{2}T\d{1,}:\d{2}:\d{2}.\d+[+-]\d+:\d+'
+    labels:
+      log_type: 'oracledb.listener'
+      plugin_id: {{ .id }}
+    output: listener_router
+
+  - id: listener_router
+    type: router
+    routes:
+      - output: xml_listener_regex_parser
+        expr: $ matches '<msg time=\\D\\d{4}-\\d{2}-\\d{2}T\\d{1,}:\\d{2}:\\d{2}.\\d+[+-]\\d+:\\d+'
+      - output: linux_listener_regex_parser
+        expr: $ matches '/[\\w\\d/]+:'
+      - output: windows_listener_regex_parser
+        expr: $ matches '\\\\[\\d\\D\\\\]*:'
+      - output: trace_listener_regex_parser
+        expr: $ matches '\\d{4}-\\d{2}-\\d{2}T\\d{1}:\\d{2}:\\d{2}.\\d+[+-]\\d+:\\d+'
+
+  - id: linux_listener_regex_parser
+    type: regex_parser
+    regex: '(?P<path>/[\w\d/\\]+:)\s(?P<status_code>\w+).*\n\nLSNRCTL for (?P<os>[\w\
