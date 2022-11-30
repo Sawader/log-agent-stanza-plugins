@@ -212,4 +212,28 @@ pipeline:
 
   - id: linux_listener_regex_parser
     type: regex_parser
-    regex: '(?P<path>/[\w\d/\\]+:)\s(?P<status_code>\w+).*\n\nLSNRCTL for (?P<os>[\w\
+    regex: '(?P<path>/[\w\d/\\]+:)\s(?P<status_code>\w+).*\n\nLSNRCTL for (?P<os>[\w\s]+):\sVersion\s(?P<listener_version>[\d\.]+)\s-\s\w+\son\s(?P<timestamp>\d{2}-\w{3}-\d{4}\s\d{2}:\d{2}:\d{2})\n\n(?P<copyright>[\d\w[:ascii:]]+)\n\n(?P<message>[\d\w[:ascii:]]+)'
+    timestamp:
+      parse_from: timestamp
+      layout: '%d-%h-%Y %T'
+    output: {{ .output }}
+
+  - id: windows_listener_regex_parser
+    type: regex_parser
+    regex: '(?P<path>\\[\d\w\\]+:)\s(?P<status_code>\w+).*\n\nLSNRCTL for (?P<os>[\w\s]+):\sVersion\s(?P<listener_version>[\d\.]+)\s-\s\w+\son\s(?P<timestamp>\d{2}-\w{3}-\d{4}\s\d{2}:\d{2}:\d{2})\n\n(?P<copyright>[\d\w[:ascii:]]+)\n\n(?P<message>[\d\w[:ascii:]]+)'
+    timestamp:
+      parse_from: timestamp
+      layout: '%d-%h-%Y %T'
+    output: {{ .output }}
+
+  - id: trace_listener_regex_parser
+    type: regex_parser
+    regex: '(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{1}:\d{2}:\d{2}.\d+[+-]\d+:\d+)\s+(?P<message>[\d\D\s]+)'
+    timestamp:
+      parse_from: timestamp
+      layout: '%Y-%m-%dT%T.%L%j'
+    output: {{ .output }}
+
+  - id: xml_listener_regex_parser
+    type: regex_parser
+    regex: '<msg\s+time=\D(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}[+-]\d{2}:\d{2})\D(\s+)?(org_id=\D(?P<org_id>[\w\d]+)\D)?(\s+)?(comp_id=\D(?P<comp_id>[\w\d]+)\D)?(\s+)?(msg_id=\D(?P<msg_id>[\w\d:]+)\D)?(\s+)?(type=\D(?P<type>\w+)\
