@@ -56,4 +56,52 @@ pipeline:
     regex: '(?P<client_address>[^\(]*)\((?P<client_address_port>[^\)]*)\)'
     output: statement_regex_parser
 
-  -
+  - id: statement_regex_parser
+    if: '$record.message matches "^STATEMENT:|^statement:"'
+    type: regex_parser
+    parse_from: $record.message
+    regex: '(^STATEMENT:\s*|^statement:\s*)(?P<statement>[\w\W]+)'
+
+  - id: sql_command_alter
+    type: restructure
+    if: '$record.statement != nil and $record.statement matches "^ALTER"'
+    ops:
+      - add:
+          field: "sql_command"
+          value: "ALTER"
+
+  - id: sql_command_commit
+    type: restructure
+    if: '$record.statement != nil and $record.statement matches "^COMMIT"'
+    ops:
+      - add:
+          field: "sql_command"
+          value: "COMMIT"
+
+  - id: sql_command_copy
+    type: restructure
+    if: '$record.statement != nil and $record.statement matches "^COPY"'
+    ops:
+      - add:
+          field: "sql_command"
+          value: "COPY"
+
+  - id: sql_command_create
+    type: restructure
+    if: '$record.statement != nil and $record.statement matches "^CREATE"'
+    ops:
+      - add:
+          field: "sql_command"
+          value: "CREATE"
+
+  - id: sql_command_delete
+    type: restructure
+    if: '$record.statement != nil and $record.statement matches "^DELETE"'
+    ops:
+      - add:
+          field: "sql_command"
+          value: "DELETE"
+
+  - id: sql_command_drop
+    type: restructure
+    if: '$record.statement != nil and $record.sta
