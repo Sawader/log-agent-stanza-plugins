@@ -104,4 +104,52 @@ pipeline:
 
   - id: sql_command_drop
     type: restructure
-    if: '$record.statement != nil and $record.sta
+    if: '$record.statement != nil and $record.statement matches "^DROP"'
+    ops:
+      - add:
+          field: "sql_command"
+          value: "DROP"
+
+  - id: sql_command_grant
+    type: restructure
+    if: '$record.statement != nil and $record.statement matches "^GRANT"'
+    ops:
+      - add:
+          field: "sql_command"
+          value: "GRANT"
+
+  - id: sql_command_insert
+    type: restructure
+    if: '$record.statement != nil and $record.statement matches "^INSERT"'
+    ops:
+      - add:
+          field: "sql_command"
+          value: "INSERT"
+
+  - id: sql_command_revoke
+    type: restructure
+    if: '$record.statement != nil and $record.statement matches "^REVOKE"'
+    ops:
+      - add:
+          field: "sql_command"
+          value: "REVOKE"
+
+  - id: sql_command_rollback
+    type: restructure
+    if: '$record.statement != nil and $record.statement matches "^ROLLBACK"'
+    ops:
+      - add:
+          field: "sql_command"
+          value: "ROLLBACK"
+
+  - id: sql_command_select
+    type: restructure
+    if: '$record.statement != nil and $record.statement matches "^SELECT"'
+    ops:
+      - add:
+          field: "sql_command"
+          value: "SELECT"
+
+  - id: sql_command_truncate
+    type: restructure
+    if: '$record.statem
