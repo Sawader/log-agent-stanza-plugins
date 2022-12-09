@@ -152,4 +152,30 @@ pipeline:
 
   - id: sql_command_truncate
     type: restructure
-    if: '$record.statem
+    if: '$record.statement != nil and $record.statement matches "^TRUNCATE"'
+    ops:
+      - add:
+          field: "sql_command"
+          value: "TRUNCATE"
+
+  - id: sql_command_update
+    type: restructure
+    if: '$record.statement != nil and $record.statement matches "^UPDATE"'
+    ops:
+      - add:
+          field: "sql_command"
+          value: "UPDATE"
+
+  - id: sql_command_vacuum
+    type: restructure
+    if: '$record.statement != nil and $record.statement matches "^VACUUM"'
+    ops:
+      - add:
+          field: "sql_command"
+          value: "VACUUM"
+
+  - id: output_router
+    type: router
+    routes:
+      - output: {{.output}}
+        expr: 'true'

@@ -1,0 +1,106 @@
+
+# Plugin Info
+version: 0.1.0
+title: Redis
+description: Log parser for Redis
+parameters:
+  - name: file_path
+    label: Redis Logs Path
+    description: The absolute path to the Redis logs
+    type: string
+    default: "/var/log/redis/redis.log*"
+  - name: start_at
+    label: Start At
+    description: Start reading file from 'beginning' or 'end'
+    type: enum
+    valid_values:
+      - beginning
+      - end
+    default: end
+
+# Set Defaults
+# {{$file_path := default "/var/log/redis/redis.log*" .file_path}}
+# {{$start_at := default "end" .start_at}}
+
+# Pipeline Template
+pipeline:
+# Sample line (Redis 3+): 534:M 28 Apr 2020 11:30:29.988 * DB loaded from disk: 0.002 seconds
+# Sample line (Redis <3): [4018] 14 Nov 07:01:22.119 * Background saving terminated with success
+  - id: redis_file
+    type: file_input
+    include:
+      - {{ $file_path }}
+    multiline:
+      line_start_pattern: '\[?(?:\d+):?(?:[A-Z])?\]?\s+(?:\d{2}\s+\w+(?:\s+\d{4})?\s+\d{2}:\d{2}:\d{2}.\d{3})\s+(?:[\*|#|\-|\.])'
+    start_at: {{ $start_at }}
+    labels:
+      log_type: redis
+      plugin_id: {{ .id }}
+
+  - id: redis_parser
+    type: regex_parser
+    regex: '^\[?(?P<pid>\d+):?(?P<role>[A-Z])?\]?\s+(?P<timestamp>\d{2}\s+\w+(?:\s+\d{4})?\s+\d{2}:\d{2}:\d{2}.\d{3})\s+(?P<level>[\*|#|\-|\.])\s+(?P<message>.*)'
+    severity:
+      parse_from: level
+      mapping:
+        warning: '#'
+        info: '-'
+        debug: '.'
+        notice: '*'
+
+  - id: time_router
+    type: router
+    routes:
+    - output: time_parser_1
+      expr: $record.timestamp matches '\\d{2}\\s+\\w+\\s+\\d{2}:\\d{2}:\\d{2}\\.\\d{3}'
+    - output: time_parser_2
+      expr: $record.timestamp matches '\\d{2}\\s+\\w+\\s+\\d{4}\\s+\\d{2}:\\d{2}:\\d{2}.\\d{3}'
+
+  - id: time_parser_1
+    type: time_parser
+    parse_from: timestamp
+    layout: '%d %b %H:%M:%S.%s'
+    output: role_router
+
+  - id: time_parser_2
+    type: time_parser
+    parse_from: timestamp
+    layout: '%d %b %Y %H:%M:%S.%s'
+    output: role_router
+
+  - id: role_router
+    type: router
+    routes:
+    - output: add_sentinel_role
+      expr: $record.role == 'X'
+    - output: add_rdb_role
+      expr: $record.role == 'C'
+    - output: add_slave_role
+      expr: $record.role == 'S'
+    - output: add_master_role
+      expr: $record.role == 'M'
+    default: {{.output}}
+
+  - id: add_sentinel_role
+    type: add
+    field: $record.role
+    value: 'sentinel'
+    output: {{.output}}
+
+  - id: add_rdb_role
+    type: add
+    field: $record.role
+    value: 'RDB/AOF_writing_child'
+    output: {{.output}}
+
+  - id: add_slave_role
+    type: add
+    field: $record.role
+    value: 'slave'
+    output: {{.output}}
+
+  - id: add_master_role
+    type: add
+    field: $record.role
+    value: 'master'
+    output: {{.output}}

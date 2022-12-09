@@ -1,0 +1,15 @@
+# Plugin Info
+version: 0.0.6
+title: Rsyslog
+description: Log parser for Rsyslog
+parameters:
+  - name: listen_port
+    label: Listen Port
+    description: A port which the agent will listen for syslog messages
+    type: int
+    default: 514
+  - name: connection_type
+    label: Connection Type
+    description: The type of Rsyslog connection (`udp` or `tcp`)
+    type: enum
+  
