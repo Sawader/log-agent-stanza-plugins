@@ -12,4 +12,20 @@ parameters:
     label: Connection Type
     description: The type of Rsyslog connection (`udp` or `tcp`)
     type: enum
-  
+    valid_values:
+      - udp
+      - tcp
+    default: udp
+  - name: protocol
+    label: Protocol
+    description: Protocol of received syslog messages (`rfc3164 (BSD)` or `rfc5424 (IETF)`).
+    type: enum
+    valid_values:
+      - rfc3164 (BSD)
+      - rfc5424 (IETF)
+    default: rfc5424 (IETF)
+  - name: location
+    label: Geographic Location
+    description: The geographic location (timezone) to use when parsing the timestamp (Rsyslog RFC 3164 only)
+    type: enum
+    valid_values: ["Africa/Abidjan","Africa/Accra","Africa/Addis_Ababa","Africa/Algiers","Africa/Asmara","Africa/Bamako","Africa/Bangui","Africa/Banjul","Africa/Bissau","Africa/Blantyre","Africa/Brazzaville","Africa/Bujumbura","Africa/Cairo","Africa/Casablanca","Africa/Ceuta","Africa/Conakry","Africa/Dakar","Africa/Dar_es_Salaam","Africa/Djibouti","Africa/Douala","Africa/El_Aaiun","Africa/Freetown","Africa/Gaborone","Africa/Harare","Africa/Johannesburg","Africa/Juba","Africa/Kampala","Africa/Khartoum","Africa/Kigali","Africa/Kinshasa","Africa/Lagos","Africa/Libreville","Africa/Lome","Africa/Luanda","Africa/Lubumbashi","Africa/Lusaka","Africa/Malabo","Africa/Maputo","Africa/Maseru","Africa/Mbabane","Africa/Mogadishu","Africa/Monrovia","Africa/Nairobi","Africa/Ndjamena","Africa/Niamey","Africa
