@@ -93,4 +93,43 @@ parameters:
 # {{$length := len $listen_address}}
 # {{$listen_ip := default "0.0.0.0" .listen_ip}}
 # {{$listen_port := default 514 .listen_port}}
-# {{$con
+# {{$connection_type := default "udp" .connection_type}}
+# {{$protocol := default "rfc5424 (IETF)" .protocol}}
+# {{$location := default "UTC" .location}}
+# {{$tls_enable := default false .tls_enable}}
+# {{$tls_certificate := default "" .tls_certificate}}
+# {{$tls_private_key := default "" .tls_private_key}}
+# {{$tls_min_version := default "1.2" .tls_min_version}}
+
+# Pipeline Template
+pipeline:
+# {{ if eq $connection_type "udp" }}
+  - id: rsyslog_udp_input
+    type: udp_input
+    listen_address: '{{ if eq $length 0 }}{{ $listen_ip }}:{{ $listen_port }}{{ else }}{{ $listen_address }}{{ end }}'
+    labels:
+      log_type: rsyslog
+      plugin_id: {{ .id }}
+    add_labels: true
+    output: rsyslog_parser
+# {{ end }}
+
+# {{ if eq $connection_type "tcp" }}
+  - id: rsyslog_tcp_input
+    type: tcp_input
+    listen_address: '{{ if eq $length 0 }}{{ $listen_ip }}:{{ $listen_port }}{{ else }}{{ $listen_address }}{{ end }}'
+    labels:
+      log_type: rsyslog
+      plugin_id: {{ .id }}
+    tls:
+      enable: {{ $tls_enable }}
+      certificate: {{ $tls_certificate }}
+      private_key: {{ $tls_private_key }}
+      min_version: {{ $tls_min_version }}
+    add_labels: true
+    output: rsyslog_parser
+# {{ end }}
+
+  - id: rsyslog_parser
+    type: syslog_parser
+    protocol: '{{ if eq $protocol "rfc3164 (BSD)" }}rfc3
