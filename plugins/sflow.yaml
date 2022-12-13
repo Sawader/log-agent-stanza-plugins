@@ -41,4 +41,36 @@ parameters:
     advanced_config: true
   - name: listen_address
     label: Listen Address
-    descripti
+    description: Parameter Deprecated Use 'listen_ip' and 'listen_port' instead.
+    type: string
+    default: ""
+    advanced_config: true
+    hidden: true
+
+# Set Defaults
+# {{$listen_address := default "" .listen_address}}
+# {{$length := len $listen_address}}
+# {{$listen_ip := default "0.0.0.0" .listen_ip}}
+# {{$listen_port := default 6343 .listen_port}}
+# {{$sampling_enable := default false .sampling_enable}}
+# {{$sampling_drop_rate := default 0.0 .sampling_drop_rate}}
+
+# Pipeline Template
+pipeline:
+- type: goflow_input
+  mode: sflow
+  listen_address: '{{ if eq $length 0 }}{{ $listen_ip }}:{{ $listen_port }}{{ else }}{{ $listen_address }}{{ end }}'
+  labels:
+    log_type: sflow
+    plugin_id: {{ .id }}
+
+# {{ if $sampling_enable }}
+- type: filter
+  expr: 'true'
+  drop_ratio: {{ $sampling_drop_rate }}
+# {{ end }}
+
+# Remove goflow specific field
+- type: remove
+  field: $record.type
+  output: {{ .output }}

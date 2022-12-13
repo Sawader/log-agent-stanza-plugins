@@ -1,0 +1,17 @@
+version: 0.0.1
+title: Sonicwall
+description: Log parser for Sonicwall
+supported_platforms:
+  - linux
+  - windows
+  - macos
+min_stanza_version: 1.2.7
+parameters:
+  - name: listen_port
+    label: Listen Port
+    description: A port which the agent will listen for udp messages
+    type: int
+    default: 514
+  - name: location
+    label: Geographic Location
+  
