@@ -1,0 +1,44 @@
+# Plugin Info
+version: 0.0.3
+title: Sflow
+description: Log parser for Sflow
+min_stanza_version: 1.1.0
+parameters:
+  - name: listen_port
+    label: Listen Port
+    description: A port which the agent will listen for syslog messages
+    type: int
+    default: 6343
+  - name: sampling_enable
+    label: Sampling
+    description: Enable Netflow sampling
+    type: bool
+    default: false
+  - name: sampling_drop_rate
+    label: Sampling Drop Rate
+    description: The probability an entry is dropped. A value of 1.0 will drop 100% of matching entries, while a value of 0.0 will drop 0%.
+    type: enum
+    valid_values:
+      - 0.0
+      - 0.1
+      - 0.2
+      - 0.3
+      - 0.4
+      - 0.5
+      - 0.6
+      - 0.7
+      - 0.8
+      - 0.9
+      - 1.0
+    relevant_if:
+      sampling_enable:
+        equals: true
+  - name: listen_ip
+    label: Listen IP
+    description: A syslog ip address of the form `<ip>`
+    type: string
+    default: "0.0.0.0"
+    advanced_config: true
+  - name: listen_address
+    label: Listen Address
+    descripti
