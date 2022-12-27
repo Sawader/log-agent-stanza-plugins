@@ -110,4 +110,30 @@ pipeline:
     labels:
       log_type: syslogng
       plugin_id: {{ .id }}
-    add_labels: tr
+    add_labels: true
+    output: syslogng_parser
+# {{ end }}
+
+# {{ if eq $connection_type "tcp" }}
+  - id: syslogng_tcp_input
+    type: tcp_input
+    listen_address: '{{ if eq $length 0 }}{{ $listen_ip }}:{{ $listen_port }}{{ else }}{{ $listen_address }}{{ end }}'
+    labels:
+      log_type: syslogng
+      plugin_id: {{ .id }}
+    tls:
+      enable: {{ $tls_enable }}
+      certificate: {{ $tls_certificate }}
+      private_key: {{ $tls_private_key }}
+      min_version: {{ $tls_min_version }}
+    add_labels: true
+    output: syslogng_parser
+# {{ end }}
+
+  - id: syslogng_parser
+    type: syslog_parser
+    protocol: '{{ if eq $protocol "rfc3164 (BSD)" }}rfc3164{{- else -}}rfc5424{{end}}'
+# {{ if eq $protocol "rfc3164 (BSD)" }}
+    location: {{$location}}
+# {{ end }}
+    output: {{ .output }}

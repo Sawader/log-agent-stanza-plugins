@@ -1,0 +1,104 @@
+
+# Plugin Info
+version: 0.0.4
+title: Tail
+description: File Input Parser
+min_stanza_version: 0.13.12
+parameters:
+  - name: file_log_path
+    label: File Log Path
+    description: An array of file log path glob patterns.
+    type: strings
+    required: true
+  - name: exclude_file_log_path
+    label: Exclude File Log Path
+    description: An array of file log path glob patterns to be excluded.
+    type: strings
+    default: []
+  - name: enable_multiline
+    label: Enable Multiline
+    description: Enable to parse Multiline Log Files
+    type: bool
+    default: false
+  - name: multiline_line_start_pattern
+    label: Multiline Start Pattern
+    description: A Regex pattern that matches the start of a multiline log entry in the log file.
+    type: string
+    default: ''
+    required: true
+    relevant_if:
+      enable_multiline:
+        equals: true
+  - name: encoding
+    label: Encoding
+    description: The encoding of the log file.
+    type: enum
+    valid_values:
+      - utf-8
+      - utf-16le
+      - utf-16be
+      - ascii
+      - big5
+    default: utf-8
+  - name: parse_format
+    label: Format
+    description: The log format to parse.
+    type: enum
+    valid_values:
+      - none
+      - JSON
+    default: none
+  - name: log_type
+    label: Log Type
+    description: 'Adds label log_type to identify tail source. In observIQ, the "log_type" will appear as "Type".'
+    type: string
+    default: tail
+  - name: start_at
+    label: Start At
+    description: Start reading file from 'beginning' or 'end'
+    type: enum
+    valid_values:
+      - beginning
+      - end
+    default: end
+# Set Defaults
+# {{$enable_multiline := default false .enable_multiline}}
+# {{$multiline_line_start_pattern := default "" .multiline_line_start_pattern}}
+# {{$encoding := default "utf-8" .encoding}}
+# {{$parse_format := default "none" .parse_format}}
+# {{$log_type := default "tail" .log_type}}
+# {{$start_at := default "end" .start_at}}
+
+# Pipeline Template
+pipeline:
+  - type: file_input
+    start_at: '{{ $start_at }}'
+    include:
+# {{ range $i, $fp := .file_log_path  }}
+      - '{{ $fp }}'
+# {{ end }}
+# {{ if .exclude_file_log_path }}
+    exclude:
+  # {{ range $i, $efp := .exclude_file_log_path  }}
+      - '{{ $efp }}'
+  # {{ end }}
+# {{ end }}
+# {{ if $enable_multiline }}
+    multiline:
+      line_start_pattern: '{{ $multiline_line_start_pattern }}'
+# {{ end }}
+# {{ if $encoding }}
+    encoding: '{{ $encoding }}'
+# {{ end }}
+    include_file_name: true
+    labels:
+      plugin_id: {{ .id }}
+      log_type: '{{ $log_type }}'
+# {{ if (eq $parse_format "none")}}
+    output: {{ .output }}
+# {{ end }}
+
+# {{ if (eq $parse_format "JSON")}}
+  - type: json_parser
+    output: {{ .output }}
+#{{ end }}

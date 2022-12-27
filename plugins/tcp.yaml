@@ -1,0 +1,18 @@
+# Plugin Info
+version: 0.0.2
+title: TCP
+description: TCP Input
+min_stanza_version: 1.2.7
+parameters:
+  - name: listen_port
+    label: Listen Port
+    description: A port which the agent will listen for tcp messages
+    type: int
+    required: true
+  - name: log_type
+    label: Type
+    description: Adds the specified 'Type' as a label to each log message.
+    type: string
+    default: tcp
+  - name: listen_ip
+    label: L
