@@ -15,4 +15,50 @@ parameters:
     type: string
     default: tcp
   - name: listen_ip
-    label: L
+    label: Listen IP
+    description: A ip address of the form `<ip>`
+    type: string
+    default: "0.0.0.0"
+    advanced_config: true
+  - name: add_labels
+    label: Labels
+    description: Adds net.transport, net.peer.ip, net.peer.port, net.host.ip and net.host.port labels.
+    type: bool
+    default: true
+    advanced_config: true
+  - name: enable_tls
+    label: Enable TLS
+    description: Enable TLS for the TCP listener
+    type: bool
+    default: false
+    advanced_config: true
+  - name: certificate_file
+    label: TLS certificate path
+    description: File path for the X509 TLS certificate chain
+    type: string
+    default: "/opt/cert"
+    relevant_if:
+      enable_tls:
+        equals: true
+    advanced_config: true
+  - name: private_key_file
+    label: TLS private key path
+    description: File path for the X509 TLS certificate chain
+    type: string
+    default: "/opt/key"
+    relevant_if:
+      enable_tls:
+        equals: true
+    advanced_config: true
+  - name: min_version
+    label: "TLS Minimum Version"
+    description: What minimum version of TLS to use
+    type: enum
+    valid_values:
+    - "1.0" # To match operator and prevent breaking change
+    - "1.1"
+    - "1.2"
+    - "1.3"
+    default: "1.0"
+    advanced_config: true
+    relevant_if:
