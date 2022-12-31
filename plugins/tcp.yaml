@@ -62,3 +62,36 @@ parameters:
     default: "1.0"
     advanced_config: true
     relevant_if:
+      enable_tls:
+        equals: true
+
+# Set Defaults
+# {{$listen_ip := default "0.0.0.0" .listen_ip}}
+# {{$listen_port := .listen_port}}
+# {{$log_type := default "tcp" .log_type}}
+# {{$add_labels := default true .add_labels}}
+# {{$enable_tls := default false .enable_tls}}
+# {{$certificate_file := default "" .certificate_file}}
+# {{$private_key_file := default "" .private_key_file}}
+# {{$min_version := default "1.0" .min_version}}
+
+# Pipeline Template
+pipeline:
+  - type: tcp_input
+    listen_address: '{{ $listen_ip }}:{{ $listen_port }}'
+    labels:
+      log_type: {{$log_type}}
+      plugin_id: {{ .id }}
+    add_labels: {{$add_labels}}
+    # {{ if $enable_tls }}
+    tls:
+      enable: {{ $enable_tls }}
+      certificate: {{ $certificate_file }}
+      private_key: {{ $private_key_file }}
+      min_version: {{ $min_version }}
+    # {{ end }}
+
+  - type: move
+    from: $record
+    to: $record.message
+    output: {{.output}}
