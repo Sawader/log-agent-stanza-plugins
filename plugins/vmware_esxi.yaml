@@ -1,0 +1,48 @@
+# Plugin Info
+version: 0.0.9
+title: VMware ESXi
+description: Log parser for VMware ESXi
+parameters:
+  - name: listen_port
+    label: Listen Port
+    description: A port which the agent will listen for syslog messages
+    type: int
+    default: 5140
+  - name: listen_ip
+    label: Listen IP
+    description: A syslog ip address of the form `<ip>`
+    type: string
+    default: "0.0.0.0"
+    advanced_config: true
+  - name: listen_address
+    label: Listen Address
+    description: Parameter Deprecated Use 'listen_ip' and 'listen_port' instead.
+    type: string
+    default: ""
+    advanced_config: true
+    hidden: true
+  - name: enable_tls
+    label: Enable TLS
+    description: Enable TLS for the TCP listener
+    type: bool
+    default: false
+  - name: certificate_file
+    label: TLS certificate path
+    description: File path for the X509 TLS certificate chain
+    type: string
+    default: "/opt/cert"
+    required: true
+    relevant_if:
+      enable_tls:
+        equals: true
+  - name: private_key_file
+    label: TLS private key path
+    description: File path for the X509 TLS certificate chain
+    type: string
+    default: "/opt/key"
+    required: true
+    relevant_if:
+      enable_tls:
+        equals: true
+
+# Set Defa
