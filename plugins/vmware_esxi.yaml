@@ -45,4 +45,35 @@ parameters:
       enable_tls:
         equals: true
 
-# Set Defa
+# Set Defaults
+# {{$listen_address := default "" .listen_address}}
+# {{$length := len $listen_address}}
+# {{$listen_ip := default "0.0.0.0" .listen_ip}}
+# {{$listen_port := default 5140 .listen_port}}
+# {{$enable_tls := default true .enable_tls}}
+# {{$certificate_file := default "" .certificate_file}}
+# {{$private_key_file := default "" .private_key_file}}
+
+# Pipeline Template
+pipeline:
+  - id: esxi_input
+    type: tcp_input
+    listen_address: '{{ if eq $length 0 }}{{ $listen_ip }}:{{ $listen_port }}{{ else }}{{ $listen_address }}{{ end }}'
+    labels:
+      log_type: vmware_esxi
+      plugin_id: {{ .id }}
+    add_labels: true
+    tls:
+      enable: {{ $enable_tls }}
+      certificate: {{ $certificate_file }}
+      private_key: {{ $private_key_file }}
+    output: timestamp_router
+  - id: timestamp_router
+    type: router
+    default: {{ .output }}
+    routes:
+      - expr: '$record matches "^(<(?P<priority>[\\d]*)>)?(?P<timestamp>[a-zA-z]+ \\d{2} \\d{2}:\\d{2}:\\d{2}).*"'
+        output: esxi_parser_1
+      - expr: '$record matches "^(<(?P<priority>[\\d]*)>)?(?P<timestamp>\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d+Z) (?P<hostname>[^ ]+) (?P<service>[^:]+):.*"'
+        output: esxi_parser_2
+      - expr: '$record matches "^(<(?P<priority>[\\d]*)>)?(?P<timestamp>\\d{4}-\\d{2}-\\d{2}T\\
