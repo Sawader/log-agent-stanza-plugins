@@ -102,4 +102,33 @@ pipeline:
 
   - id: esxi_parser_3
     type: regex_parser
-    regex: '^(<(?P<priority>[\d]*)>)?(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z) (?P
+    regex: '^(<(?P<priority>[\d]*)>)?(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z) (?P<hostname>[^ ]+) (?P<service>[^\[]*)\[(?P<pid>[^\]]*)\]: (?P<message>.*)'
+    timestamp:
+      parse_from: timestamp
+      layout: '%Y-%m-%dT%H:%M:%SZ'
+    output: severity_parser
+
+  - id: esxi_parser_4
+    type: regex_parser
+    regex: '^(<(?P<priority>[\d]*)>)?(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z) (?P<hostname>[^ ]+) (?P<service>[^:]*): (?P<message>.*)'
+    timestamp:
+      parse_from: timestamp
+      layout: '%Y-%m-%dT%H:%M:%SZ'
+    output: severity_parser
+
+  - id: esxi_parser_5
+    type: regex_parser
+    regex: '^(<(?P<priority>[\d]*)>)?(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+[+-]\d{2}:\d{2}) (?P<hostname>[^ ]+) (?P<service>[^:]*)(\[(?P<pid>[^\]]*)\])?: (?P<message>.*)'
+    timestamp:
+      parse_from: timestamp
+      layout: '%Y-%m-%dT%H:%M:%S.%L%j'
+    output: severity_parser
+
+  - type: severity_parser
+    parse_from: $record.priority
+    mapping:
+      emergency: [0,8,16,24,32,40,48,56,64,72,80,88,96,104,112,120,128,136,144,152,160,168,176,184]
+      alert: [1,9,17,25,33,41,49,57,65,73,81,89,97,105,113,121,129,137,145,153,161,169,177,185]
+      critical: [2,10,18,26,34,42,50,58,66,74,82,90,98,106,114,122,130,138,146,154,162,170,178,186]
+      error: [3,11,19,27,35,43,51,59,67,75,83,91,99,107,115,123,131,139,147,155,163,171,179,187]
+      warnin
