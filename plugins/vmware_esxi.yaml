@@ -76,4 +76,30 @@ pipeline:
         output: esxi_parser_1
       - expr: '$record matches "^(<(?P<priority>[\\d]*)>)?(?P<timestamp>\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d+Z) (?P<hostname>[^ ]+) (?P<service>[^:]+):.*"'
         output: esxi_parser_2
-      - expr: '$record matches "^(<(?P<priority>[\\d]*)>)?(?P<timestamp>\\d{4}-\\d{2}-\\d{2}T\\
+      - expr: '$record matches "^(<(?P<priority>[\\d]*)>)?(?P<timestamp>\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z) (?P<hostname>[^ ]+) (?P<service>[^\\[]*)\\[(?P<pid>[^\\]]*)\\]:.*"'
+        output: esxi_parser_3
+      - expr: '$record matches "^(<(?P<priority>[\\d]*)>)?(?P<timestamp>\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z) (?P<hostname>[^ ]+) (?P<service>[^:]*):.*"'
+        output: esxi_parser_4
+      - expr: '$record matches "^(<(?P<priority>[\\d]*)>)?(?P<timestamp>\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d+[+-]\\d{2}:\\d{2}) (?P<hostname>[^ ]+) (?P<service>[^:]*)(\\[(?P<pid>[^\\]]*)\\]:)?.*"'
+        output: esxi_parser_5
+
+  - id: esxi_parser_1
+    type: regex_parser
+    regex: '^(<(?P<priority>[\d]*)>)?(?P<timestamp>[a-zA-z]+ \d{2} \d{2}:\d{2}:\d{2}) (?P<hostname>[^ ]+) (?P<service>[^:]+) (?P<message>.*)'
+    timestamp:
+      parse_from: timestamp
+      layout: '%b %d %H:%M:%S'
+
+    output: severity_parser
+
+  - id: esxi_parser_2
+    type: regex_parser
+    regex: '^(<(?P<priority>[\d]*)>)?(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z) (?P<hostname>[^ ]+) (?P<service>[^:]+): (?P<message>.*)'
+    timestamp:
+      parse_from: timestamp
+      layout: '%Y-%m-%dT%H:%M:%S.%LZ'
+    output: severity_parser
+
+  - id: esxi_parser_3
+    type: regex_parser
+    regex: '^(<(?P<priority>[\d]*)>)?(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z) (?P
