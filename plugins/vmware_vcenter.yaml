@@ -1,0 +1,155 @@
+
+# Plugin Info
+version: 1.0.1
+title: VMware vCenter
+description: Log parser for VMware vCenter
+min_stanza_version: 0.13.16
+parameters:
+  - name: listen_port
+    label: Listen Port
+    description: A port which the agent will listen for syslog messages
+    type: int
+    default: 5140
+  - name: listen_ip
+    label: Listen IP
+    description: A syslog ip address of the form `<ip>`
+    type: string
+    default: "0.0.0.0"
+    advanced_config: true
+  - name: listen_address
+    label: Listen Address
+    description: Parameter Deprecated Use 'listen_ip' and 'listen_port' instead.
+    type: string
+    default: ""
+    advanced_config: true
+    hidden: true
+  - name: max_buffer_size
+    label: Max Buffer Size
+    description: Maximum size of buffer that may be allocated while reading TCP input
+    type: string
+    default: "1024kib"
+    required: false
+  - name: enable_tls
+    label: Enable TLS
+    description: Enable TLS for the TCP listener
+    type: bool
+    default: false
+  - name: certificate_file
+    label: TLS certificate path
+    description: File path for the X509 TLS certificate chain
+    type: string
+    default: "/opt/cert"
+    required: true
+    relevant_if:
+      enable_tls:
+        equals: true
+  - name: private_key_file
+    label: TLS private key path
+    description: File path for the X509 TLS certificate chain
+    type: string
+    default: "/opt/key"
+    required: true
+    relevant_if:
+      enable_tls:
+        equals: true
+
+# Set Defaults
+# {{$listen_address := default "0.0.0.0:5140" .listen_address}}
+# {{$length := len $listen_address}}
+# {{$listen_ip := default "0.0.0.0" .listen_ip}}
+# {{$listen_port := default 5140 .listen_port}}
+# {{$max_buffer_size := default "1024kib" .max_buffer_size}}
+# {{$enable_tls := default true .enable_tls}}
+# {{$certificate_file := default "" .certificate_file}}
+# {{$private_key_file := default "" .private_key_file}}
+
+# Pipeline Template
+pipeline:
+  - id: vcenter_input
+    type: tcp_input
+    listen_address: '{{ if eq $length 0 }}{{ $listen_ip }}:{{ $listen_port }}{{ else }}{{ $listen_address }}{{ end }}'
+    max_buffer_size: {{ $max_buffer_size }}
+    labels:
+      log_type: vmware_vcenter
+      plugin_id: {{ .id }}
+    add_labels: true
+    tls:
+      enable: {{ $enable_tls }}
+      certificate: {{ $certificate_file }}
+      private_key: {{ $private_key_file }}
+    output: prefix_router
+
+  # vcenter will (sometimes) prepend an id to the messages, check
+  # for the id and drop it if it exsits
+  # example: '257 <14>1. . . '
+  - id: prefix_router
+    type: router
+    routes:
+      - expr: '$record matches "^{.*}"'
+        output: gcve_json_parser
+      - expr: '$record matches "^\\d* "'
+        output: pre_parser
+    default: vcenter_parser
+
+  - id: pre_parser
+    type: regex_parser
+    regex: '^(?P<drop>\d* )(?P<syslog_message>[\w\W]*)'
+    output: pre_parser_restructure
+
+  - id: pre_parser_restructure
+    type: restructure
+    ops:
+      - remove: "$record.drop"
+      - move:
+          from: "$record.syslog_message"
+          to: "$record"
+    output: vcenter_parser
+
+  - id: vcenter_parser
+    type: syslog_parser
+    protocol: rfc5424
+    output: {{ .output }}
+
+  - id: gcve_json_parser
+    type: json_parser
+    parse_from: $record
+    severity:
+      parse_from: '$record["@fields.severity"]'
+    timestamp:
+      layout: "2006-01-02T15:04:05.000000-07:00"
+      layout_type: gotime
+      parse_from: '$record["@timestamp"]'
+    output: gcve_restructure
+
+  - id: gcve_restructure
+    type: restructure
+    ops:
+    - move:
+        from: '$record["@version"]'
+        to: "$record.version"
+    - move:
+        from: '$record["@fields.host"]'
+        to: '$record.host'
+    - move:
+        from: '$record["@fields.facility"]'
+        to: '$record.facility'
+    - move:
+        from: '$record["@fields.procid"]'
+        to: '$record.procid'
+    - move:
+        from: '$record["@fields.privatecloud_id"]'
+        to: '$record.privatecloud_id'
+    - move:
+        from: '$record["@fields.privatecloud_name"]'
+        to: '$record.privatecloud_name'
+    - move:
+        from: '$record["@fields.alias"]'
+        to: '$record.alias'
+    - move:
+        from: '$record["@fields.company_name"]'
+        to: '$record.company_name'
+    - move:
+        from: '$record["@fields.region_id"]'
+        to: '$record.region_id'
+    output: {{.output}}
+    
