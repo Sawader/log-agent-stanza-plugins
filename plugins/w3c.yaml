@@ -16,4 +16,50 @@ parameters:
     default: []
   - name: encoding
     label: Encoding
-    description: Specify the en
+    description: Specify the encoding of the file(s) being read. In most cases, you can leave the default option selected.
+    type: enum
+    valid_values:
+      - utf-8
+      - utf-16le
+      - utf-16be
+      - ascii
+      - big5
+    default: utf-8
+  - name: log_type
+    label: Type
+    description: Adds the specified 'Type' as a label to each log message.
+    type: string
+    default: w3c
+  - name: start_at
+    label: Start At
+    description: Start reading file from 'beginning' or 'end'
+    type: enum
+    valid_values:
+      - beginning
+      - end
+    default: end
+  - name: delete_after_read
+    label: Delete After Read
+    description: 'Delete files after reading all entries, requires start_at: beginning'
+    type: bool
+    default: false
+    relevant_if:
+      start_at:
+        equals: "beginning"
+  - name: max_concurrent_files
+    label: Max Concurrent File
+    description: Max number of W3C files that will be open during a polling cycle
+    type: int
+    default: 512
+    advanced_config: true
+  - name: include_file_name
+    label: Include File Name
+    description: Include File Name as a label
+    type: bool
+    default: true
+  - name: include_file_path
+    label: Include File Path
+    description: Include File Path as a label
+    type: bool
+    default: false
+  - name: include_
