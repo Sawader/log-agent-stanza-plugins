@@ -62,4 +62,36 @@ parameters:
     description: Include File Path as a label
     type: bool
     default: false
-  - name: include_
+  - name: include_file_name_resolved
+    label: Include Resolved File Name
+    description: Same as include_file_name, however, if file name is a symlink, the underlying file's name will be set as a label
+    type: bool
+    default: false
+  - name: include_file_path_resolved
+    label: Include Resolved File Path
+    description: Same as include_file_path, however, if file path is a symlink, the underlying file's path will be set as a label
+    type: bool
+    default: false
+  - name: fields_header
+    label: W3C Fields Header
+    description: The W3C header which specifies the field names
+    type: string
+    default: Fields
+  - name: delimiter
+    label: Delimiter
+    description: Delimiter character used between fields (Defaults to a tab character)
+    type: string
+    default: "\t"
+  - name: header_delimiter
+    label: Header Delimiter
+    description: Header Delimiter character used between values in a header (Defaults to a tab character)
+    type: string
+    default: "\t"
+# Set Defaults
+# {{$encoding := default "utf-8" .encoding}}
+# {{$log_type := default "w3c" .log_type}}
+# {{$start_at := default "end" .start_at}}
+# {{$delete_after_read := default false .delete_after_read}}
+# {{$max_concurrent_files := default 512 .max_concurrent_files}}
+# {{$include_file_name := default true .include_file_name}}
+# {{$include_file_path 
