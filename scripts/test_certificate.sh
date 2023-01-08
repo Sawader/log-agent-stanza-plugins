@@ -59,3 +59,22 @@ openssl ca \
     -batch \
     -config test/tls/openssl.conf \
     -out test/tls/plugins.crt
+
+# append ca.crt to server certificate
+cat test/tls/plugins-ca.crt >> test/tls/plugins.crt    
+
+# client cert
+openssl genrsa -out test/tls/plugins-client.key 2048
+openssl req -new -key test/tls/plugins-client.key -out test/tls/plugins-client.csr \
+    -subj "/C=US/ST=Michigan/L=GrandRapids/O=observIQ/OU=plugins/CN=plugins-dev-client"
+openssl ca \
+    -create_serial \
+    -cert test/tls/plugins-ca.crt \
+    -keyfile test/tls/plugins-ca.key \
+    -days 9125 \
+    -in test/tls/plugins-client.csr \
+    -batch \
+    -config test/tls/openssl.conf \
+    -out test/tls/plugins-client.crt
+
+chmod 0644 test/tls/*
