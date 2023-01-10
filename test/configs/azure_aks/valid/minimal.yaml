@@ -1,0 +1,4 @@
+
+pipeline:
+- type: azure_aks
+- type: stdout
