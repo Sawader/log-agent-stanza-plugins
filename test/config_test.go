@@ -59,4 +59,17 @@ func detectConfigs() (valid, invalid []string, err error) {
 	err = filepath.Walk(configBaseDir,
 		func(path string, info os.FileInfo, err error) error {
 			if err != nil {
-				retu
+				return err
+			}
+
+			if !info.IsDir() && strings.Contains(path, ".yaml") {
+				if strings.Contains(path, "invalid") {
+					invalid = append(invalid, path)
+				} else {
+					valid = append(valid, path)
+				}
+			}
+			return nil
+		})
+	return valid, invalid, err
+}
