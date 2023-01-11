@@ -1,9 +1,9 @@
+
 pipeline:
-- type: azure_event_hub
+- type: azure_log_analytics
   namespace: stanza
   event_hub_name: stanza_hub
   group: $Default
   connection_string: some_connection_string
-  prefetch_count: 100
-  start_at: end
-  log_type: azure_event_hubs_custom
+  prefetch_count: xyz
+- type: stdout
