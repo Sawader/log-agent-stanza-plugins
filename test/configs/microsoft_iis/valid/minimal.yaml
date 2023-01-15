@@ -1,0 +1,4 @@
+pipeline:
+- type: microsoft_iis
+  file_path: " "
+- type: stdout

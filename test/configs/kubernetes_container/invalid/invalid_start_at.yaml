@@ -1,4 +1,5 @@
+
 pipeline:
 - type: kubernetes_container
-  enable_nested_json_parser: x
+  start_at: x
 - type: stdout
