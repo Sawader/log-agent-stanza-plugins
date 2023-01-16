@@ -1,0 +1,4 @@
+pipeline:
+- type: sflow
+  mode: v5
+- type: stdout
