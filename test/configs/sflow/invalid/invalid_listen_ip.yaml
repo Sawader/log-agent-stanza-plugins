@@ -1,0 +1,4 @@
+pipeline:
+- type: sflow
+  listen_ip: 5140
+- type: stdout
