@@ -3,4 +3,5 @@ pipeline:
   listen_address: 0.0.0.0:2000
   workers: 10
   sampling_enable: true
-  samplin
+  sampling_drop_rate: "50%"
+- type: stdout
