@@ -4,5 +4,6 @@ pipeline:
   connection_type: tcp
   tls_enable: true
   tls_certificate: ./tls/plugins.crt
-  tls_private_key: ./tls/plugins.key.doesnotexist
+  tls_private_key: ./tls/plugins.key
+  tls_min_version: "1.1"
 - type: stdout

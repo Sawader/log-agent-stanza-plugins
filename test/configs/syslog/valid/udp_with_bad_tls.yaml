@@ -1,0 +1,4 @@
+# udp skips tls config, so a bad tls config should still run
+pipeline:
+- type: syslog
+  listen_port
