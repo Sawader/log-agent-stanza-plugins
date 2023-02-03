@@ -1,0 +1,12 @@
+pipeline:
+- type: w3c
+  file_log_path:
+  - "/tmp/in.log"
+  - "/var/log/w3c/*"
+  exclude_file_log_path:
+  - "/var/log/w3c/*.tar.gz"
+  encoding: "ascii"
+  log_type: "custom_w3c"
+  start_at: "end"
+  delete_after_read: true
+  include_f
